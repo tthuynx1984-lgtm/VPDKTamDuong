@@ -1,0 +1,2159 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>VPĐK Tam Dương</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Bố cục: thanh trên cùng (tên đơn vị + 3 mục), phía dưới là vùng làm việc của từng công cụ */
+:root{--bg:#f3f6f7;--surface:#ffffff;--ink:#13222c;--muted:#5a6b76;--line:#d5dee3;--accent:#0b5a6b;--accent-ink:#ffffff;--tab-hover:#e8eef0;
+--sans:"Be Vietnam Pro",system-ui,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a20;--surface:#17252d;--ink:#e6eef1;--muted:#93a6b0;--line:#2a3c46;--accent:#5fc1d4;--accent-ink:#0a1a20;--tab-hover:#1f323b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a20;--surface:#17252d;--ink:#e6eef1;--muted:#93a6b0;--line:#2a3c46;--accent:#5fc1d4;--accent-ink:#0a1a20;--tab-hover:#1f323b;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;display:flex;flex-direction:column;overflow:hidden}
+.top{display:flex;align-items:center;gap:8px 20px;flex-wrap:wrap;padding-block:8px 0;padding-inline:16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.brand{display:flex;flex-direction:column;min-width:0;padding-block:2px 8px}
+.brand b{font-size:1.05rem;font-weight:700;letter-spacing:.01em;color:var(--accent)}
+.brand span{font-size:.74rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{display:flex;gap:2px;margin-left:auto;overflow-x:auto;max-width:100%}
+.nav button{font:inherit;font-weight:600;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px 9px;cursor:pointer;white-space:nowrap;border-radius:6px 6px 0 0}
+.nav button:hover{background:var(--tab-hover);color:var(--ink)}
+.nav button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{flex:1;min-height:0;position:relative}
+.mod{position:absolute;inset:0;overflow:auto}
+.mod[hidden]{display:none}
+@media (max-width:640px){.nav{margin-left:0;width:100%}.brand span{white-space:normal}}
+/* hộp thoại thay cho alert / confirm / prompt */
+.dlg{position:fixed;inset:0;z-index:50;background:rgba(10,20,26,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.dlg[hidden]{display:none}
+.dlg form{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:18px;width:min(460px,100%);max-height:88%;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.dlg p{margin:0;white-space:pre-wrap;line-height:1.5;font-size:.92rem}
+.dlg input{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 11px;width:100%}
+.dlg .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.dlg button{font:inherit;font-weight:600;border-radius:6px;padding:8px 14px;cursor:pointer;border:1px solid var(--accent);background:none;color:var(--accent)}
+.dlg button.ok{background:var(--accent);color:var(--accent-ink)}
+</style>
+
+<header class="top">
+  <div class="brand"><b>VPĐK Tam Dương</b><span>Chi nhánh Văn phòng đăng ký đất đai Tam Dương · Phú Thọ</span></div>
+  <nav class="nav" role="tablist" aria-label="Công cụ" id="nav"></nav>
+</header>
+<div class="stage" id="stage"></div>
+
+<form class="dlg" id="dlg" hidden><div></div></form>
+
+<template id="tpl-bpkt"><style>
+:host{display:block;--brandbg:#0f4c75;--th:#f7f9fa;--hair:#eef1f3;--badbg:#fde3df;--badink:#9c2a18;--grp:#eaf1f6;--okbg:#e4f3ea;--nbg:#eceff1;--focus:#ffd37a;--bg:#f2f4f6;--panel:#fff;--ink:#14232f;--mute:#5d6b76;--line:#d9dfe4;--brand:#0f4c75;--ok:#2b7a4b;--ton:#b3402a;--tonbg:#fbe9e4;--warn:#8a5a00;--warnbg:#fff3d6}
+*{box-sizing:border-box}
+.app{min-height:100%;box-sizing:border-box;margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 'Segoe UI','Be Vietnam Pro',Roboto,Arial,sans-serif}
+header{background:var(--brandbg);color:#fff;padding:14px 22px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:600;flex:1;min-width:220px}
+header .live{font-size:12px;opacity:.92;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:#7be0a0}.dot.err{background:#ff8f7a}.dot.load{background:var(--focus)}
+.btn{border:0;border-radius:6px;padding:8px 14px;font:inherit;font-weight:600;cursor:pointer;display:inline-block}
+.btn.primary{background:var(--panel);color:var(--brand)}.btn.ghost{background:rgba(255,255,255,.16);color:#fff}
+.btn.big{background:var(--brandbg);color:#fff;padding:12px 26px;font-size:15px}
+.mini{border:1px solid var(--line);background:var(--panel);border-radius:5px;padding:3px 10px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--ink);margin-left:8px}
+.mini.danger{color:var(--ton)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+main{padding:16px 22px 40px;max-width:1280px;margin:0 auto}
+.bar{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;background:var(--panel);flex-wrap:wrap}
+.seg button{border:0;background:var(--panel);padding:7px 13px;font:inherit;cursor:pointer;color:var(--ink)}
+.seg button.on{background:var(--brandbg);color:#fff;font-weight:600}.seg button+button{border-left:1px solid var(--line)}
+.per{display:flex;align-items:center;gap:6px;font-weight:600}
+.per button{border:1px solid var(--line);background:var(--panel);border-radius:6px;padding:6px 10px;cursor:pointer;font:inherit}
+.warn{background:var(--warnbg);color:var(--warn);border-radius:8px;padding:9px 13px;margin-bottom:8px;font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px 14px}
+.kpi b{display:block;font-size:26px;font-weight:700;line-height:1.15}.kpi span{color:var(--mute);font-size:12.5px}
+.kpi.ton b{color:var(--ton)}.kpi.ok b{color:var(--ok)}
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--line);margin-bottom:14px;flex-wrap:wrap}
+.tabs button{border:0;background:none;padding:9px 16px;font:inherit;font-weight:600;color:var(--mute);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tabs button.on{color:var(--brand);border-color:var(--brand)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;margin-bottom:16px;overflow:auto}
+.card h2{font-size:14px;margin:0;padding:11px 14px;border-bottom:1px solid var(--line);font-weight:600}
+.card h2 .r{float:right}
+table{border-collapse:collapse;width:100%}
+th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--hair);white-space:nowrap}
+th{background:var(--th);font-weight:600;color:var(--mute);font-size:12.5px}
+th:first-child,td:first-child{text-align:left}td.l,th.l{text-align:left}
+tr.sai td{background:var(--badbg)}tr.thieu td{color:var(--mute)}tr.grp2 td{text-align:left!important;background:var(--grp);font-weight:700;color:var(--brand);padding:6px 12px}td.ind{padding-left:26px}
+.badge.bad{background:#c0392b;color:#fff}.okbar2{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:12px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 14px}table.aud th:nth-child(n+2),table.aud td:nth-child(n+2){text-align:right}table.aud td:last-child,table.aud th:last-child{text-align:center}td.muted{color:var(--mute)}
+.bigwarn{font-size:15px;padding:12px 16px;background:var(--badbg);color:var(--badink)}.okbar{background:var(--okbg);color:var(--ok);border-radius:8px;padding:12px 16px;margin-bottom:12px;font-weight:600}
+.notes{margin:8px 0 0;padding-left:20px}.notes li{margin:6px 0;white-space:normal}code{background:var(--hair);padding:1px 5px;border-radius:4px;font-size:12px}
+.gdform{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;padding:12px 14px}.gdform label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--mute)}.gdform input{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:6px;color:var(--ink)}.btn.sm{padding:8px 16px;font-size:14px}
+td.src{font-size:12px;color:var(--mute);max-width:260px;overflow:hidden;text-overflow:ellipsis}
+tr.total td{font-weight:700;background:var(--th)}
+.tonc{position:relative;font-weight:600;color:var(--ton)}.tonc i{position:absolute;left:0;bottom:0;height:3px;background:var(--ton);opacity:.35}
+.okc{color:var(--ok);font-weight:600}
+.badge{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600}
+.badge.d{background:var(--warnbg);color:var(--warn)}.badge.t{background:var(--tonbg);color:var(--ton)}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.n{background:var(--nbg);color:var(--mute)}
+input[type=search]{border:1px solid var(--line);border-radius:6px;padding:7px 11px;font:inherit;min-width:260px}
+select{font:inherit;max-width:230px}
+.empty{padding:34px;text-align:center;color:var(--mute)}.empty h3{color:var(--ink);margin:0 0 8px;font-size:18px}
+.grp{padding:10px 14px;border-bottom:1px solid var(--line)}.grp .why{font-weight:600;margin-bottom:6px}
+.sub{font-weight:400;color:var(--mute);font-size:12.5px}
+.mapbox{background:var(--th);white-space:normal}
+.mapgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:8px}
+.mapgrid label{display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--mute)}
+.app.dragging::after{content:'Thả file Excel vào đây';position:fixed;inset:0;background:rgba(15,76,117,.88);color:#fff;font-size:26px;font-weight:600;display:flex;align-items:center;justify-content:center;z-index:50}
+@media(max-width:700px){main{padding:12px 16px 32px}header{padding:12px 16px}}
+
+:host([data-theme="dark"]){color-scheme:dark;--bg:#0f1a20;--panel:#17252d;--ink:#e6eef1;--mute:#93a6b0;--line:#2a3c46;--brand:#6bb6e8;--brandbg:#1d5b86;--ok:#6fd08f;--ton:#ff9a85;--tonbg:#3a2220;--warn:#f0b35a;--warnbg:#3a2e12;--th:#1d2e37;--hair:#22343e;--badbg:#3d2321;--badink:#ffb3a5;--grp:#1c3140;--okbg:#173526;--nbg:#243640}
+.app{background:var(--bg)}
+[hidden]{display:none!important}</style><div class="app"><header>
+  <h1>Quản lý hồ sơ kỹ thuật (BPKT)</h1>
+  <div class="live"><span class="dot load" id="dot"></span><span id="liveTxt">Đang khởi động…</span></div>
+  <button class="btn ghost" id="refresh">Làm mới</button>
+  <button class="btn ghost" id="clearBtn">Xóa file đã nạp</button>
+  <button class="btn primary" id="pickBtn">Nạp file Excel</button>
+  <input type="file" id="fileInput" multiple accept=".xlsx,.xlsm,.xls,.ods,.csv,.tsv,.txt,.html,.htm" hidden>
+</header>
+<main>
+  <div id="permBar"></div>
+  <div id="warns"></div>
+  <div class="bar" id="bar">
+    <div class="seg" id="unitSeg"><button data-u="week" class="on">Tuần</button><button data-u="month">Tháng</button><button data-u="year">Năm</button></div>
+    <div class="per"><button id="prev" aria-label="Kỳ trước">‹</button><span id="plabel"></span><button id="next" aria-label="Kỳ sau">›</button><button id="today">Hiện tại</button></div>
+    <div class="seg" id="xaSeg"></div>
+  </div>
+  <div class="kpis" id="kpis"></div>
+  <div class="tabs" id="tabs">
+    <button data-t="tong" class="on">Tổng hợp</button><button data-t="time">Theo thời gian</button>
+    <button data-t="ton">Hồ sơ tồn</button><button data-t="dup">Hồ sơ trùng / rút</button><button data-t="audit">Đối chiếu THỐNG KÊ</button><button data-t="src">Nguồn dữ liệu</button>
+  </div>
+  <div id="view"></div>
+</main>
+</div></template>
+<template id="tpl-law"><style>
+/* Bố cục: hàng câu hỏi trên cùng; dưới là hai cột, trái = hệ thống văn bản, phải = xem văn bản hoặc kết quả tư vấn, thanh xuất file ở cuối ô phải */
+:host{display:block;--bg:#f3f6f7;--surface:#ffffff;--ink:#13222c;--muted:#5a6b76;--line:#d5dee3;--accent:#0b5a6b;--accent-ink:#ffffff;--ok:#1d6b3a;--warn:#9a5b00;--bad:#a8281f;
+--sans:"Be Vietnam Pro",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+:host([data-theme="dark"]){--bg:#0f1a20;--surface:#17252d;--ink:#e6eef1;--muted:#93a6b0;--line:#2a3c46;--accent:#5fc1d4;--accent-ink:#0a1a20;--ok:#6fd08f;--warn:#f0b35a;--bad:#ff8d82;color-scheme:dark}
+*{box-sizing:border-box}
+.app{min-height:100%;box-sizing:border-box;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:16px 32px}
+.wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+h1{font-size:1.3rem;margin:0;text-wrap:balance}
+h2{font-size:1.05rem;margin:0;text-wrap:balance}
+h3{font-size:.95rem;margin:0}
+.sub{color:var(--muted);margin:2px 0 0;font-size:.88rem}
+textarea,input[type=search],input[type=text],select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:10px 12px;width:100%;min-width:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ask{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:600;display:inline-block;text-decoration:none;background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent);border-radius:6px;padding:9px 14px;cursor:pointer}
+.btn.alt{background:none;color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chip{font:inherit;font-size:.85rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.files{display:flex;gap:6px;flex-wrap:wrap}
+.files .chip{font-size:.8rem}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:14px;align-items:start}
+@media (max-width:820px){.grid{grid-template-columns:minmax(0,1fr)}}
+.left{display:flex;flex-direction:column;gap:8px;min-width:0}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:8px;max-height:68vh;overflow:auto}
+.row{display:block;width:100%;text-align:left;font:inherit;color:inherit;background:none;border:0;border-bottom:1px solid var(--line);padding:10px 12px;cursor:pointer}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--bg)}
+.row[aria-current=true]{background:var(--bg);box-shadow:inset 3px 0 0 var(--accent)}
+.so{font-family:var(--mono);font-size:.85rem;font-weight:500}
+.ten{display:block;font-size:.88rem;color:var(--muted)}
+.tag{font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.right{background:var(--surface);border:1px solid var(--line);border-radius:8px;display:flex;flex-direction:column;min-width:0;min-height:60vh}
+.tabs{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.body{padding:14px 16px;display:flex;flex-direction:column;gap:12px;flex:1;min-width:0;overflow:auto;max-height:68vh}
+.foot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:10px 12px;border-top:1px solid var(--line)}
+dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 14px;margin:0;font-size:.9rem}
+dt{color:var(--muted)}dd{margin:0}
+.st-ok{color:var(--ok)}.st-warn{color:var(--warn)}.st-bad{color:var(--bad)}
+.note{font-size:.85rem;color:var(--muted);margin:0}
+.nd{white-space:pre-wrap;max-height:260px;overflow:auto;background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px;font-size:.85rem}
+.step{border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.step b{font-weight:600}
+.step .k{color:var(--muted);font-size:.82rem}
+label{font-weight:600;font-size:.9rem;display:block}
+.f2{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.addp{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.mono{font-family:var(--mono)}
+
+[hidden]{display:none!important}</style><div class="app"><div class="wrap">
+<header><h1>Tra cứu pháp luật đất đai</h1>
+<p class="sub">Văn bản Trung ương, tỉnh Phú Thọ (mới) và Vĩnh Phúc (cũ). Danh mục đối chiếu ngày 11/10/2026.</p></header>
+
+<section class="ask" id="askbox" hidden>
+<label for="sit">Câu hỏi cần tư vấn</label>
+<textarea id="sit" rows="3" placeholder="Ví dụ: Hộ ông A xin tách thửa đất ở thành 2 thửa tại xã Tam Dương, thửa có GCN cấp năm 2015. Cần trình tự và căn cứ pháp lý."></textarea>
+<div class="btns"><button class="btn alt" id="upbtn" type="button">Tải tài liệu lên</button><input type="file" id="up" multiple hidden>
+<button class="btn" id="go" type="button">Tư vấn</button><span class="note" id="upnote"></span></div>
+<div class="files" id="files"></div>
+</section>
+
+<section class="addp" id="addp" hidden><h2>Bổ sung văn bản pháp luật</h2>
+<div class="f2"><div><label for="f_cap">Cấp</label><select id="f_cap"><option>Trung ương</option><option>Phú Thọ (mới)</option><option>Vĩnh Phúc (cũ)</option><option>Khác</option></select></div>
+<div><label for="f_so">Số hiệu *</label><input id="f_so" type="text" placeholder="VD: 50/2026/NĐ-CP"></div>
+<div><label for="f_ban">Ngày ban hành</label><input id="f_ban" type="text" placeholder="dd/mm/yyyy"></div>
+<div><label for="f_hl">Hiệu lực từ</label><input id="f_hl" type="text" placeholder="dd/mm/yyyy"></div></div>
+<label for="f_ten">Trích yếu *</label><input id="f_ten" type="text">
+<label for="f_tt">Tình trạng hiệu lực</label><input id="f_tt" type="text" value="Còn hiệu lực">
+<label for="f_pdf">Đường dẫn PDF hoặc trang văn bản (nếu có)</label><input id="f_pdf" type="text" placeholder="https://...">
+<label for="f_nd">Toàn văn hoặc các điều cần dùng (dùng khi tư vấn)</label><textarea id="f_nd" rows="7"></textarea>
+<div class="btns"><button class="btn" id="f_save" type="button">Lưu văn bản</button><button class="btn alt" id="f_cancel" type="button">Đóng</button></div><p class="note" id="f_msg"></p></section>
+
+<div class="grid">
+<div class="left">
+<input type="search" id="q" placeholder="Tìm theo số hiệu hoặc nội dung" aria-label="Tìm văn bản">
+<div class="btns"><span id="chips" class="btns"></span><button class="chip" id="addbtn" type="button" hidden>+ Bổ sung văn bản</button></div>
+<div class="list" id="list" role="list"></div></div>
+<section class="right">
+<div class="tabs"><button class="chip" id="tabdoc" type="button" aria-pressed="true">Văn bản</button><button class="chip" id="tabadv" type="button" aria-pressed="false">Kết quả tư vấn</button></div>
+<div class="body" id="body"></div>
+<div class="foot"><button class="btn alt" id="xw" type="button" disabled>Xuất Word</button><button class="btn" id="xx" type="button" disabled>Xuất Excel</button></div>
+</section></div></div>
+
+</div></template>
+<template id="tpl-map"><style>
+:host{display:block;--bg:#f4f4f2;--fg:#1c1c1a;--bar:#fff;--bd:#d6d6d0;--ac:#0b6bcb}
+:host([data-theme="dark"]){--bg:#161615;--fg:#eeeeea;--bar:#232321;--bd:#3a3a36;--ac:#5aa9ff;color-scheme:dark}
+/*m*/.app{position:absolute;inset:0;background:var(--bg);color:var(--fg);font:14px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+.bar{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:6px 8px;background:var(--bar);border-bottom:1px solid var(--bd)}
+button,.btn,select,input[type=search]{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px 10px;min-height:34px;box-sizing:border-box}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#fff;cursor:pointer}
+input[type=search]{flex:1;min-width:110px}
+#w{position:relative;flex:1;min-height:0;background:#000}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:#aaa;padding:20px;pointer-events:none;line-height:1.5}
+#st{padding:4px 8px;font-size:12px;background:var(--bar);border-top:1px solid var(--bd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lv,#cl,#ll{position:absolute;right:6px;top:6px;max-height:70%;width:220px;overflow:auto;background:var(--bar);border:1px solid var(--bd);border-radius:10px;padding:8px;display:none}
+#lv label{display:flex;gap:6px;align-items:center;padding:3px 0}#lv i{width:12px;height:12px;border:1px solid #888;display:inline-block}
+#pp{position:absolute;left:6px;right:6px;bottom:6px;background:var(--bar);border:1px solid var(--bd);border-radius:10px;padding:8px;display:none;gap:6px;flex-wrap:wrap;align-items:center}
+#pp a,#pp button{text-decoration:none;color:#fff;background:var(--ac);border-color:var(--ac)}#pp button{background:var(--bg);color:var(--fg);border-color:var(--bd)}
+#pp span{flex:1 1 100%;font-size:12px}.on{outline:2px solid var(--ac)}#cm{width:64px}
+#cl{width:min(340px,92%);font-size:12px;z-index:2}#cl input{width:100%}#cl button{margin:4px 4px 0 0}#cl p{margin:4px 0}
+#gmap{position:absolute;inset:0;display:none;pointer-events:none;z-index:0}canvas{z-index:1}#pp,#lv,#cl,#ll{z-index:2}#ll{width:min(340px,92%);font-size:13px}#ll .lr{display:flex;gap:4px;align-items:center;margin:4px 0}#ll .lr span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#gps.on{outline:2px solid var(--ac)}
+#lcb{position:absolute;left:6px;top:6px;z-index:2;background:rgba(0,0,0,.7);color:#fff;border-radius:14px;padding:5px 11px;font-size:12px;display:none}#lc{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:9;padding:16px}#lc>div{background:var(--bar);border:1px solid var(--bd);border-radius:12px;padding:14px;width:min(420px,100%);font-size:14px}#lc textarea{width:100%;height:84px;box-sizing:border-box;margin:8px 0;font:12px monospace;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:8px}#lc p{margin:4px 0}#lcm{color:#d33;min-height:1.2em}
+
+[hidden]{display:none!important}#hint{z-index:2}</style><div class="app"><div class="bar"><label class="btn p">Mở<input id="f" type="file" hidden></label><button id="lib">Thư viện</button><input id="q" type="search" placeholder="Tìm số thửa / chữ"><button id="fit" title="Vừa khung">⤢</button><button id="gps" title="Vị trí của tôi">◎</button><button id="mn" title="Cài đặt">⚙</button></div>
+<div id="adv" class="bar" style="display:none"><select id="md" hidden></select><button id="sat" class="on">Vệ tinh Esri</button><button id="gg" title="Nền ảnh vệ tinh Google Maps (cần khóa API)">Nền Google</button><button id="pn" class="on">📍 Ghim</button><button id="lk">🔑 Kích hoạt</button><button id="lb">Lớp</button><button id="cb">Hiệu chỉnh</button><button id="a2" title="Chạm điểm trên bản vẽ, rồi chạm đúng điểm đó trên ảnh">Căn 2 chạm</button><button id="au" title="Tự khớp ranh với đường nét ảnh vệ tinh">Tự khớp ảnh</button><label title="Kinh tuyến trục VN-2000 (độ)">KTT <input id="cm" type="number" step="0.25" value="105"></label><select id="dt" title="Chuyển VN-2000 sang WGS84"><option value="0">Không dịch gốc</option><option value="1" selected>QĐ 05/2007 (7 tham số)</option></select><select id="mz" title="Mức ảnh vệ tinh tối đa"><option value="0">Ảnh: tự động</option><option value="18">Tối đa mức 18</option><option value="17">Tối đa mức 17</option><option value="16">Tối đa mức 16</option></select><select id="k0" title="Hệ số k0"><option value="0.9999">k0 0,9999 (3°)</option><option value="0.9996">k0 0,9996 (6°)</option></select></div>
+<div id="w"><div id="gmap"></div><canvas id="cv"></canvas><div id="hint">Bấm “Mở” để chọn file .dgn (MicroStation V8)<br>Bản đồ được lưu trong “Thư viện” trên máy này và tự mở lại lần sau.<br>Dữ liệu chỉ xử lý trên máy, không tải lên đâu cả.</div>
+<div id="lv"></div><div id="ll"></div><div id="lcb">🔑 Bản dùng thử (khóa Google Map, sao chép tọa độ) · bấm để kích hoạt</div><div id="cl"><b>Hiệu chỉnh bằng điểm chuẩn</b><p>1) Ghim đúng một điểm rõ nét (góc nhà, ngã ba đường). 2) Bấm “Mở Google Maps”, giữ lâu đúng điểm đó trên ảnh vệ tinh Google, chạm tọa độ để sao chép. 3) Dán vào ô dưới rồi bấm Thêm. Càng nhiều điểm (nên ≥3, rải đều) càng chính xác.</p><input id="cc" placeholder="Dán: 21.43961, 105.54112"><button id="ca">Thêm điểm chuẩn từ ghim</button><button id="cx">Xóa hiệu chỉnh</button><p id="cs"></p></div><div id="pp"><span id="pt"></span><a id="gm" target="_blank" rel="noopener">Mở Google Maps</a><a id="gd" target="_blank" rel="noopener">Chỉ đường</a><button id="cp">Sao chép</button><button id="px">Xóa ghim</button></div></div>
+<div id="lc"><div><b>Kích hoạt MapDGN</b><p id="lct"></p><textarea id="lcin" placeholder="Dán mã kích hoạt (bắt đầu bằng MAPDGN-…)"></textarea><p id="lcm"></p><p id="lcc" style="font-weight:600">📞 Nguyễn Xuân Thủy: <a href="tel:0972839747" style="color:inherit">0972839747</a></p><button id="lcgo" class="btn p">Kích hoạt</button> <button id="lcx">Để sau</button></div></div>
+<div id="st">Chưa mở file</div>
+</div></template>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.2/mammoth.browser.min.js"></script>
+<script>
+/* ---------- hộp thoại dùng chung (trình xem không hiện alert/confirm/prompt) ---------- */
+function uiDialog(o){
+  return new Promise(function(res){
+    var f=document.getElementById('dlg'),box=f.firstElementChild;box.textContent='';
+    var p=document.createElement('p');p.textContent=o.msg;box.appendChild(p);
+    var inp=null;if(o.input){inp=document.createElement('input');inp.type='text';inp.id='dlgIn';inp.setAttribute('aria-label',o.msg);box.appendChild(inp)}
+    var row=document.createElement('div');row.className='row';
+    function done(v){f.hidden=true;f.onsubmit=null;f.onkeydown=null;res(v)}
+    if(o.cancel){var c=document.createElement('button');c.type='button';c.textContent='Hủy';c.onclick=function(){done(null)};row.appendChild(c)}
+    var k=document.createElement('button');k.type='submit';k.className='ok';k.textContent=o.ok||'Đồng ý';row.appendChild(k);box.appendChild(row);
+    f.onsubmit=function(e){e.preventDefault();done(inp?inp.value:true)};
+    f.onkeydown=function(e){if(e.key==='Escape')done(o.cancel?null:true)};
+    f.hidden=false;(inp||k).focus();
+  });
+}
+function uiAlert(m){return uiDialog({msg:m,ok:'Đã hiểu'}).then(function(){})}
+function uiConfirm(m){return uiDialog({msg:m,cancel:true}).then(function(v){return v===true})}
+function uiPrompt(m){return uiDialog({msg:m,input:true,cancel:true}).then(function(v){return typeof v==='string'?v:null})}
+
+/* ---------- 1. Hồ sơ BPKT ---------- */
+function mountBpkt(root){
+/* ===================== ĐỌC FILE EXCEL (xlsx, xlsm, xls, ods, csv, tsv, html) ===================== */
+const MAXCOL = 70;   // chỉ đọc tối đa 70 cột đầu của mỗi sheet
+
+function xmlDecode(s) {
+  return s.replace(/&#x([0-9a-fA-F]+);/g, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(+d))
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&apos;/g, "'").replace(/&amp;/g, '&');
+}
+function attrs(s) { const o = {}; s.replace(/([\w:.-]+)\s*=\s*"([^"]*)"/g, (_, k, v) => { o[k] = v; return ''; }); return o; }
+function colLetters(s) { let n = 0; for (let i = 0; i < s.length; i++) n = n * 26 + s.charCodeAt(i) - 64; return n - 1; }
+function finishRows(map, maxRow) {            // map: Map<row, Map<col,val>> -> mảng 2 chiều
+  const rows = [];
+  for (let r = 0; r <= maxRow; r++) {
+    const m = map.get(r); if (!m) { rows.push([]); continue; }
+    let mx = -1; m.forEach((_, c) => { if (c > mx) mx = c; });
+    const arr = new Array(mx + 1).fill('');
+    m.forEach((v, c) => arr[c] = v); rows.push(arr);
+  }
+  return rows;
+}
+
+// ---------- XLSX / XLSM ----------
+async function readXlsx(buf) {
+  const zip = await JSZip.loadAsync(buf);
+  const txt = async p => { const f = zip.file(p); return f ? await f.async('string') : ''; };
+  const wbx = await txt('xl/workbook.xml');
+  if (!wbx) throw new Error('Không phải file xlsx hợp lệ');
+  const relx = await txt('xl/_rels/workbook.xml.rels');
+  const rels = {}; (relx.match(/<Relationship\b[^>]*>/g) || []).forEach(t => { const a = attrs(t); rels[a.Id] = a.Target; });
+  const sst = []; const sx = await txt('xl/sharedStrings.xml');
+  if (sx) (sx.match(/<si\b[\s\S]*?<\/si>|<si\s*\/>/g) || []).forEach(si => {
+    const clean = si.replace(/<rPh\b[\s\S]*?<\/rPh>/g, '');
+    let out = ''; clean.replace(/<t\b[^>]*>([\s\S]*?)<\/t>/g, (_, t) => { out += t; return ''; });
+    sst.push(xmlDecode(out));
+  });
+  const sheets = [];
+  const defs = wbx.match(/<sheet\b[^>]*>/g) || [];
+  for (const d of defs) {
+    const a = attrs(d); let tgt = rels[a['r:id']]; if (!tgt) continue;
+    tgt = tgt.replace(/^\/?(xl\/)?/, 'xl/');
+    const xml = await txt(tgt); const map = new Map(); let maxRow = -1;
+    const re = /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g; let m;
+    while ((m = re.exec(xml))) {
+      const at = m[1], body = m[2]; if (!body) continue;
+      const rm = at.match(/\br="([A-Z]+)(\d+)"/); if (!rm) continue;
+      const c = colLetters(rm[1]); if (c >= MAXCOL) continue;
+      const r = +rm[2] - 1, tm = at.match(/\bt="(\w+)"/), t = tm ? tm[1] : 'n';
+      let val = '';
+      if (t === 'inlineStr') { let o = ''; body.replace(/<t\b[^>]*>([\s\S]*?)<\/t>/g, (_, x) => { o += x; return ''; }); val = xmlDecode(o); }
+      else { const vm = body.match(/<v>([\s\S]*?)<\/v>/); if (!vm) continue;
+        if (t === 's') val = sst[+vm[1]] || ''; else if (t === 'str') val = xmlDecode(vm[1]);
+        else if (t === 'e') val = ''; else if (t === 'b') val = vm[1] === '1' ? 'TRUE' : 'FALSE';
+        else { val = parseFloat(vm[1]); if (isNaN(val)) val = xmlDecode(vm[1]); } }
+      if (val === '') continue;
+      let row = map.get(r); if (!row) { row = new Map(); map.set(r, row); }
+      row.set(c, val); if (r > maxRow) maxRow = r;
+    }
+    sheets.push({ name: xmlDecode(a.name), rows: finishRows(map, maxRow), hidden: a.state === 'hidden' });
+  }
+  return sheets;
+}
+
+// ---------- ODS ----------
+async function readOds(buf) {
+  const zip = await JSZip.loadAsync(buf);
+  const f = zip.file('content.xml'); if (!f) throw new Error('Không phải file ods hợp lệ');
+  const xml = await f.async('string'); const sheets = [];
+  const parts = xml.split(/<table:table\s/).slice(1);
+  for (let part of parts) {
+    const end = part.indexOf('</table:table>'); if (end >= 0) part = part.slice(0, end);
+    const name = xmlDecode((part.match(/table:name="([^"]*)"/) || [, 'Sheet'])[1]);
+    const map = new Map(); let r = 0, maxRow = -1;
+    const rowRe = /<table:table-row\b([^>]*?)(?:\/>|>([\s\S]*?)<\/table:table-row>)/g; let rm;
+    while ((rm = rowRe.exec(part))) {
+      const ra = attrs(rm[1]), rep = +(ra['table:number-rows-repeated'] || 1), body = rm[2] || '';
+      const cells = new Map(); let c = 0;
+      const cellRe = /<table:(covered-)?table-cell\b([^>]*?)(?:\/>|>([\s\S]*?)<\/table:(?:covered-)?table-cell>)/g; let cm;
+      while ((cm = cellRe.exec(body))) {
+        const ca = attrs(cm[2]), crep = +(ca['table:number-columns-repeated'] || 1), vt = ca['office:value-type'];
+        let val = '';
+        if (vt === 'float' || vt === 'percentage' || vt === 'currency') val = parseFloat(ca['office:value']);
+        else if (vt === 'date') val = ca['office:date-value'] || '';
+        else if (vt === 'boolean') val = ca['office:boolean-value'] === 'true' ? 'TRUE' : 'FALSE';
+        else if (vt === 'string' || cm[3]) {
+          if (ca['office:string-value'] != null) val = xmlDecode(ca['office:string-value']);
+          else val = xmlDecode((cm[3] || '').replace(/<text:s\b[^>]*\/>/g, ' ').replace(/<\/text:p>\s*<text:p[^>]*>/g, '\n').replace(/<[^>]+>/g, ''));
+        }
+        if (val !== '' && !(typeof val === 'number' && isNaN(val))) for (let k = 0; k < Math.min(crep, 5) && c + k < MAXCOL; k++) cells.set(c + k, val);
+        c += crep; if (c > 4000) break;
+      }
+      if (cells.size) { for (let k = 0; k < Math.min(rep, 1000); k++) map.set(r + k, cells); maxRow = Math.max(maxRow, r + Math.min(rep, 1000) - 1); }
+      r += rep;
+    }
+    sheets.push({ name, rows: finishRows(map, maxRow), hidden: false });
+  }
+  return sheets;
+}
+
+// ---------- XLS (BIFF8) ----------
+function readOLE(u8) {
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  const sig = [0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1];
+  if (!sig.every((b, i) => u8[i] === b)) throw new Error('Không phải file .xls hợp lệ');
+  const ss = 1 << dv.getUint16(30, true), ms = 1 << dv.getUint16(32, true);
+  const dirStart = dv.getUint32(48, true), cutoff = dv.getUint32(56, true), mfStart = dv.getUint32(60, true), dfStart = dv.getUint32(68, true), dfNum = dv.getUint32(72, true);
+  const off = id => (id + 1) * ss, END = 0xFFFFFFF0;
+  const difat = []; for (let i = 0; i < 109; i++) { const v = dv.getUint32(76 + i * 4, true); if (v < END) difat.push(v); }
+  let d = dfStart; for (let i = 0; i < dfNum && d < END; i++) { const o = off(d); for (let j = 0; j < ss / 4 - 1; j++) { const v = dv.getUint32(o + j * 4, true); if (v < END) difat.push(v); } d = dv.getUint32(o + ss - 4, true); }
+  const fat = []; difat.forEach(s => { const o = off(s); for (let j = 0; j < ss / 4; j++) fat.push(dv.getUint32(o + j * 4, true)); });
+  const chain = (start, table) => { const out = []; let s = start, g = 0; while (s < END && g++ < 1e6) { out.push(s); s = table[s]; } return out; };
+  const readChain = (start, size) => { const ids = chain(start, fat), out = new Uint8Array(ids.length * ss); ids.forEach((s, i) => out.set(u8.subarray(off(s), off(s) + ss), i * ss)); return size != null ? out.subarray(0, size) : out; };
+  const dirBytes = readChain(dirStart); const ddv = new DataView(dirBytes.buffer, dirBytes.byteOffset, dirBytes.byteLength);
+  const ents = [];
+  for (let i = 0; i + 128 <= dirBytes.length; i += 128) {
+    const nl = ddv.getUint16(i + 64, true); let name = ''; for (let k = 0; k < (nl - 2) / 2; k++) name += String.fromCharCode(ddv.getUint16(i + k * 2, true));
+    ents.push({ name, type: dirBytes[i + 66], start: ddv.getUint32(i + 116, true), size: ddv.getUint32(i + 120, true) });
+  }
+  const root = ents[0]; let mini = null, miniFat = null;
+  const stream = e => {
+    if (e.size < cutoff) {
+      if (!mini) { mini = readChain(root.start, root.size); const mf = readChain(mfStart); const mdv = new DataView(mf.buffer, mf.byteOffset, mf.byteLength); miniFat = []; for (let i = 0; i < mf.length / 4; i++) miniFat.push(mdv.getUint32(i * 4, true)); }
+      const ids = chain(e.start, miniFat), out = new Uint8Array(ids.length * ms); ids.forEach((s, i) => out.set(mini.subarray(s * ms, s * ms + ms), i * ms)); return out.subarray(0, e.size);
+    }
+    return readChain(e.start, e.size);
+  };
+  const wbE = ents.find(e => e.type === 2 && (e.name === 'Workbook' || e.name === 'Book'));
+  if (!wbE) throw new Error('Không tìm thấy dữ liệu bảng tính trong file .xls');
+  return stream(wbE);
+}
+
+function readXls(buf) {
+  const wb = readOLE(new Uint8Array(buf)); const dv = new DataView(wb.buffer, wb.byteOffset, wb.byteLength);
+  const u16 = p => dv.getUint16(p, true), u32 = p => dv.getUint32(p, true);
+  const recs = []; for (let p = 0; p + 4 <= wb.length;) { const id = u16(p), len = u16(p + 2); recs.push({ id, p: p + 4, len }); p += 4 + len; }
+  // chuỗi dùng chung (SST) có thể bị chia qua các bản ghi CONTINUE
+  const sst = [];
+  const si = recs.findIndex(r => r.id === 0xFC);
+  if (si >= 0) {
+    const chunks = [{ p: recs[si].p + 8, e: recs[si].p + recs[si].len }];
+    for (let k = si + 1; k < recs.length && recs[k].id === 0x3C; k++) chunks.push({ p: recs[k].p, e: recs[k].p + recs[k].len });
+    const uniq = u32(recs[si].p + 4); let ci = 0, pos = chunks[0].p;
+    const need = () => { while (pos >= chunks[ci].e && ci < chunks.length - 1) { ci++; pos = chunks[ci].p; } };
+    const skip = n => { while (n > 0) { need(); const a = Math.min(n, chunks[ci].e - pos); if (a <= 0) break; pos += a; n -= a; } };
+    for (let i = 0; i < uniq && ci < chunks.length; i++) {
+      need(); const cch = u16(pos); const fl = wb[pos + 2]; pos += 3;
+      let hi = fl & 1, runs = 0, ext = 0;
+      if (fl & 8) { runs = u16(pos); pos += 2; } if (fl & 4) { ext = u32(pos); pos += 4; }
+      let s = '', left = cch;
+      while (left > 0) {
+        if (pos >= chunks[ci].e) { if (ci < chunks.length - 1) { ci++; pos = chunks[ci].p; hi = wb[pos] & 1; pos++; } else break; }
+        const bw = hi ? 2 : 1, avail = Math.floor((chunks[ci].e - pos) / bw), n = Math.min(left, avail);
+        if (n <= 0) { pos = chunks[ci].e; continue; }
+        for (let k = 0; k < n; k++) s += String.fromCharCode(hi ? u16(pos + k * 2) : wb[pos + k]);
+        pos += n * bw; left -= n;
+      }
+      skip(runs * 4 + ext); sst.push(s);
+    }
+  }
+  const bs = []; recs.forEach(r => { if (r.id === 0x85) { const type = wb[r.p + 5], cch = wb[r.p + 6], fl = wb[r.p + 7]; let name = '';
+    for (let k = 0; k < cch; k++) name += String.fromCharCode((fl & 1) ? u16(r.p + 8 + k * 2) : wb[r.p + 8 + k]);
+    bs.push({ off: u32(r.p), name, type, hidden: wb[r.p + 4] !== 0 }); } });
+  const rk = v => { let n; if (v & 2) n = v >> 2; else { const b = new DataView(new ArrayBuffer(8)); b.setUint32(4, (v & 0xFFFFFFFC) >>> 0, true); n = b.getFloat64(0, true); } return (v & 1) ? n / 100 : n; };
+  const sheets = [];
+  for (const sh of bs) {
+    if (sh.type !== 0) continue;
+    const map = new Map(); let maxRow = -1, depth = 0, lastF = null;
+    const put = (r, c, v) => { if (c >= MAXCOL || v === '' || v == null) return; let m = map.get(r); if (!m) { m = new Map(); map.set(r, m); } m.set(c, v); if (r > maxRow) maxRow = r; };
+    const startIdx = recs.findIndex(r => r.p - 4 === sh.off);
+    for (let k = startIdx; k >= 0 && k < recs.length; k++) {
+      const r = recs[k], p = r.p;
+      if (r.id === 0x809) { depth++; continue; } if (r.id === 0x0A) { depth--; if (depth <= 0) break; continue; }
+      if (r.id === 0xFD) put(u16(p), u16(p + 2), sst[u32(p + 6)] || '');
+      else if (r.id === 0x203) put(u16(p), u16(p + 2), dv.getFloat64(p + 6, true));
+      else if (r.id === 0x27E) put(u16(p), u16(p + 2), rk(u32(p + 6)));
+      else if (r.id === 0xBD) { const row = u16(p), c0 = u16(p + 2), n = (r.len - 6) / 6; for (let j = 0; j < n; j++) put(row, c0 + j, rk(u32(p + 4 + j * 6 + 2))); }
+      else if (r.id === 0x204) { const cch = u16(p + 6), fl = wb[p + 8]; let s = ''; for (let j = 0; j < cch; j++) s += String.fromCharCode((fl & 1) ? u16(p + 9 + j * 2) : wb[p + 9 + j]); put(u16(p), u16(p + 2), s); }
+      else if (r.id === 0x06) { const row = u16(p), col = u16(p + 2);
+        if (wb[p + 12] === 0xFF && wb[p + 13] === 0xFF) { if (wb[p + 6] === 0) lastF = [row, col]; else if (wb[p + 6] === 1) put(row, col, wb[p + 8] ? 'TRUE' : 'FALSE'); }
+        else put(row, col, dv.getFloat64(p + 6, true)); }
+      else if (r.id === 0x207 && lastF) { const cch = u16(p), fl = wb[p + 2]; let s = ''; for (let j = 0; j < cch; j++) s += String.fromCharCode((fl & 1) ? u16(p + 3 + j * 2) : wb[p + 3 + j]); put(lastF[0], lastF[1], s); lastF = null; }
+    }
+    sheets.push({ name: sh.name, rows: finishRows(map, maxRow), hidden: sh.hidden });
+  }
+  return sheets;
+}
+
+// ---------- CSV / TSV / HTML ----------
+function decodeText(buf) {
+  const u8 = new Uint8Array(buf);
+  try { return new TextDecoder('utf-8', { fatal: true }).decode(u8).replace(/^\uFEFF/, ''); }
+  catch (e) { try { return new TextDecoder('windows-1258').decode(u8); } catch (e2) { return new TextDecoder('latin1').decode(u8); } }
+}
+function readCsv(buf, name) {
+  const t = decodeText(buf), first = t.slice(0, 4000);
+  const cnt = ch => (first.match(new RegExp(ch === '\t' ? '\\t' : '\\' + ch, 'g')) || []).length;
+  const delim = [',', ';', '\t'].sort((a, b) => cnt(b) - cnt(a))[0];
+  const rows = []; let row = [], cur = '', q = false;
+  for (let i = 0; i < t.length; i++) {
+    const ch = t[i];
+    if (q) { if (ch === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+    else if (ch === '"') q = true;
+    else if (ch === delim) { row.push(cur); cur = ''; }
+    else if (ch === '\n' || ch === '\r') { if (ch === '\r' && t[i + 1] === '\n') i++; row.push(cur); rows.push(row); row = []; cur = ''; }
+    else cur += ch;
+  }
+  if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+  const num = /^-?\d+(\.\d+)?$/;
+  return [{ name: (name || 'Sheet1').replace(/\.[^.]+$/, ''), rows: rows.map(r => r.slice(0, MAXCOL).map(v => { v = v.trim(); return v; })), hidden: false }];
+}
+function readHtmlTable(buf) {          // file .xls thực chất là HTML
+  const doc = new DOMParser().parseFromString(decodeText(buf), 'text/html'), out = [];
+  doc.querySelectorAll('table').forEach((tb, i) => {
+    const rows = []; tb.querySelectorAll('tr').forEach(tr => rows.push([...tr.children].slice(0, MAXCOL).map(td => td.textContent.replace(/\s+/g, ' ').trim())));
+    if (rows.length > 1) out.push({ name: 'Bảng ' + (i + 1), rows, hidden: false });
+  });
+  return out;
+}
+
+async function readWorkbook(buf, fileName) {
+  const u8 = new Uint8Array(buf), ext = (fileName.split('.').pop() || '').toLowerCase();
+  const isZip = u8[0] === 0x50 && u8[1] === 0x4B, isOle = u8[0] === 0xD0 && u8[1] === 0xCF;
+  if (isZip) {
+    const zip = await JSZip.loadAsync(buf);
+    if (zip.file('xl/workbook.xml')) return await readXlsx(buf);
+    if (zip.file('content.xml')) return await readOds(buf);
+    if (zip.file('xl/workbook.bin')) throw new Error('File .xlsb chưa được hỗ trợ – hãy mở bằng Excel và Lưu dưới dạng .xlsx');
+    throw new Error('Không nhận diện được định dạng file');
+  }
+  if (isOle) return readXls(buf);
+  const head = decodeText(buf.slice ? buf.slice(0, 600) : buf).trim().toLowerCase();
+  if (head.startsWith('<') && (head.includes('<table') || head.includes('<html'))) return readHtmlTable(buf);
+  if (['csv', 'tsv', 'txt'].includes(ext) || true) return readCsv(buf, fileName);
+}
+if (false) module.exports = { readWorkbook, readXlsx, readXls, readOds, readCsv };
+
+
+/* ===================== NHẬN DIỆN CỘT & TỔNG HỢP ===================== */
+const KNOWN_XA = ['Hoàng An', 'Hội Thịnh', 'Tam Dương', 'Tam Dương Bắc'];
+function norm(s) {
+  return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D').toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim();
+}
+function alnum(s) { return norm(s).replace(/ /g, ''); }
+function str(v) { return v == null ? '' : String(v).replace(/\s+/g, ' ').trim(); }
+function colName(i) { let s = ''; i++; while (i > 0) { const m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); } return s; }
+
+// kw: "=X" khớp nguyên nhãn; "^X" nhãn bắt đầu bằng X; còn lại: nhãn chứa X
+const FIELD_DEFS = [
+  { k: 'toThua', label: 'Tờ - Thửa (gộp 1 cột)', kw: ['TO THUA', 'TO BAN DO THUA'] },
+  { k: 'ma', label: 'Mã hồ sơ', kw: ['MA HO SO', 'MA HS', 'MA BIEN NHAN', 'SO BIEN NHAN', '=MA', '=MHS', 'MA SO HO SO'] },
+  { k: 'ten', label: 'Tên hồ sơ / chủ sử dụng', kw: ['TEN HO SO', 'HO VA TEN', 'HO TEN', 'TEN CHU', 'CHU SU DUNG', 'TEN NGUOI', '=TEN', 'NGUOI NOP', 'NGUOI YEU CAU'] },
+  { k: 'sdt', label: 'Số điện thoại', kw: ['DIEN THOAI', 'SDT', 'SO DT', '=DT', 'PHONE'] },
+  { k: 'to', label: 'Số tờ', kw: ['SO TO', 'TO BAN DO', '=TO'] },
+  { k: 'thua', label: 'Số thửa', kw: ['SO THUA', '=THUA'] },
+  { k: 'cb', label: 'Cán bộ xử lý', kw: ['CAN BO', 'NGUOI XU LY', 'CHUYEN VIEN', '=CB', 'NGUOI THUC HIEN'] },
+  { k: 'nhan', label: 'Ngày nhận', kw: ['NGAY NHAN', 'TIEP NHAN', 'NGAY TIEP NHAN'] },
+  { k: 'status', label: 'Đã trình (cột đánh dấu)', kw: ['DA TRINH', '=TRANG THAI'] },
+  { k: 'trinh', label: 'Ngày trình / ký (có thể nhiều cột)', multi: true, kw: ['NGAY TRINH', '=TRINH', 'NGAY KY', 'TRINH KY', '^GD ', '^PGD ', '^LANH DAO'] },
+  { k: 'loai', label: 'Loại thủ tục', kw: ['THU TUC', 'LOAI HS', '=LOAI', 'LOAI HO SO'] },
+  { k: 'ghiChu', label: 'Ghi chú', kw: ['GHI CHU'] },
+  { k: 'dia', label: 'Địa bàn (cột Xã cũ)', kw: ['=XA CU', 'DIA BAN', 'XA CU'] },
+  { k: 'xa', label: 'Xã (nếu có cột riêng)', kw: ['=XA', 'XA PHUONG', 'THUOC XA'] }
+];
+function kwMatch(label, kw) {
+  if (!label) return false;
+  return kw.some(k => k[0] === '=' ? label === k.slice(1) : k[0] === '^' ? label.startsWith(k.slice(1)) : label.includes(k));
+}
+
+function headerLabels(rows, he, ncol) {
+  const labP = [], labC = [];
+  for (let c = 0; c < ncol; c++) {
+    let p = '', all = [];
+    for (let r = Math.max(0, he - 3); r <= he; r++) { const v = norm(rows[r] && rows[r][c]); if (v) { all.push(v); p = v; } }
+    labP.push(p); labC.push(all.join(' '));
+  }
+  return { labP, labC };
+}
+function matchFields(rows, he, ncol) {
+  const { labP, labC } = headerLabels(rows, he, ncol), map = {}, used = new Set();
+  for (const lab of [labP, labC]) {
+    FIELD_DEFS.forEach(f => {
+      if (map[f.k] != null && !f.multi) return;
+      for (let c = 0; c < ncol; c++) {
+        if (used.has(c)) continue;
+        if (kwMatch(lab[c], f.kw)) { if (f.multi) (map[f.k] = map[f.k] || []).push(c); else map[f.k] = c; used.add(c); if (!f.multi) break; }
+      }
+    });
+    if (lab === labP) { /* lần 2 chỉ bổ sung các trường còn thiếu */ }
+  }
+  return { map, labP, labC, used };
+}
+function detectSheet(rows) {
+  let ncol = 0; rows.slice(0, 60).forEach(r => { if (r.length > ncol) ncol = r.length; });
+  ncol = Math.min(Math.max(ncol, 1), 70);
+  let best = null;
+  for (let he = 0; he < Math.min(25, rows.length); he++) {
+    const m = matchFields(rows, he, ncol), n = Object.keys(m.map).length;
+    if (m.map.ten == null && m.map.toThua == null) continue;
+    if (!best || n > best.n) best = { he, n, ...m };
+  }
+  if (!best) return { ok: false, he: 0, map: {}, labP: [], ncol };
+  // trường "Đã trình": nếu thiếu nhãn thì dò theo nội dung cột
+  if (best.map.status == null) {
+    for (let c = 0; c < ncol; c++) {
+      if (best.used.has(c)) continue;
+      const vals = []; for (let r = best.he + 1; r < Math.min(rows.length, best.he + 400); r++) { const v = norm(rows[r] && rows[r][c]); if (v) vals.push(v); }
+      if (vals.length >= 5 && vals.filter(v => v === 'DA TRINH').length / vals.length >= 0.8) { best.map.status = c; break; }
+    }
+  }
+  return { ok: true, he: best.he, map: best.map, labP: best.labP, labC: best.labC, ncol };
+}
+function matchXa(text, extra) {
+  const t = norm(text); let best = null;
+  (extra || KNOWN_XA).forEach(x => { const nx = norm(x); if (t === nx || (' ' + t + ' ').includes(' ' + nx + ' ')) { if (!best || nx.length > norm(best).length) best = x; } });
+  return best;
+}
+
+// ---------- ngày ----------
+const CFG = { MIN_YEAR: 2023, MAX_YEAR: 2030 };
+function pad(n) { return String(n).padStart(2, '0'); }
+function toIso(v, limit, minY, maxY) {
+  let y, m, d;
+  if (typeof v === 'number') {
+    if (v >= 1e7 && v < 1e8) { const s = String(v); d = +s.slice(0, 2); m = +s.slice(2, 4); y = +s.slice(4); }
+    else if (v > 30000 && v < 80000) { const dt = new Date(Date.UTC(1899, 11, 30) + Math.round(v) * 864e5); y = dt.getUTCFullYear(); m = dt.getUTCMonth() + 1; d = dt.getUTCDate(); }
+    else return '';
+  } else if (typeof v === 'string') {
+    let mm = v.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (mm) { y = +mm[1]; m = +mm[2]; d = +mm[3]; }
+    else { mm = v.match(/(\d{1,2})\s*[\/\-.]\s*(\d{1,2})\s*[\/\-.]\s*(\d{2,4})/); if (!mm) return ''; d = +mm[1]; m = +mm[2]; y = +mm[3]; if (y < 100) y += 2000; }
+  } else return '';
+  if (!(m >= 1 && m <= 12 && d >= 1 && d <= 31 && y >= (minY || CFG.MIN_YEAR) && y <= (maxY || CFG.MAX_YEAR))) return '';
+  const iso = y + '-' + pad(m) + '-' + pad(d);
+  return limit && iso > limit ? '' : iso;
+}
+
+// ---------- tạo hồ sơ từ 1 sheet ----------
+function buildRecords(rows, cfg, srcLabel, limit, opts) {
+  const M = cfg.map, out = [], stat = { bad: 0, rows: 0 }; let lastIdx = -1, far = false;
+  const g = (r, k) => M[k] == null ? '' : r[M[k]];
+  for (let i = cfg.he + 1; i < rows.length; i++) {
+    const r = rows[i]; if (!r || !r.length) continue;
+    const ten = str(g(r, 'ten')); if (!ten || norm(ten).startsWith('TEN HO SO')) continue;
+    if (lastIdx >= 0 && i - lastIdx > 200) far = true; lastIdx = i;
+    let to = str(g(r, 'to')), thua = str(g(r, 'thua'));
+    if (M.toThua != null) { const s = str(r[M.toThua]), mm = s.match(/(\d+)\s*[-–\/.]\s*(\d+)/); if (mm) { to = mm[1]; thua = mm[2]; } else if (s && !to) to = s; }
+    const ma = str(g(r, 'ma')), ghiChu = str(g(r, 'ghiChu'));
+    const nraw = g(r, 'nhan'); const nhan = toIso(nraw, limit), nhanAny = toIso(nraw, null, 1900, 2100);
+    let nhanRaw = ''; if (!nhan && nraw !== '' && nraw != null) { stat.bad++; nhanRaw = String(nraw); }
+    const tdates = (M.trinh || []).map(c => toIso(r[c], limit)).filter(Boolean).sort();
+    let tt = false;
+    if (M.status != null) { const s = str(r[M.status]); tt = s !== '' && !norm(s).startsWith('CHUA'); }
+    const daTrinh = tt || (opts.trinhByDate && tdates.length > 0), dt = M.status != null ? tt : daTrinh;
+    let sdt = str(g(r, 'sdt')).replace(/\D/g, ''); if (sdt.length === 9) sdt = '0' + sdt;
+    const words = norm(ma + ' ' + ghiChu).split(' ');
+    let xa = cfg.xa;
+    if (cfg.xa === '__COL__' || !cfg.xa) { xa = matchXa(str(g(r, 'xa'))) || str(g(r, 'xa')) || '(Chưa rõ xã)'; }
+    out.push({ xa, src: srcLabel, row: i + 1, ten, ma, to, thua, sdt, dia: str(g(r, 'dia')), cb: str(g(r, 'cb')), loai: str(g(r, 'loai')),
+      nhan, trinh: tdates[0] || '', daTrinh, dt, rut: words.includes('RUT') || words.includes('HUY'), rutS: norm(ghiChu) === 'RUT',
+      cbRaw: g(r, 'cb') == null ? '' : String(g(r, 'cb')), blankDate: M.nhan != null && (nraw === '' || nraw == null), nhanRaw, nhanAny, odd: !!nhanAny && (typeof nraw === 'string' || (typeof nraw === 'number' && nraw >= 1e7)), far });
+  }
+  return { recs: out, bad: stat.bad };
+}
+const DIA_BAN = ['HƯỚNG ĐẠO', 'ĐẠO TÚ', 'KIM LONG', 'HỢP HÒA', 'DUY PHIÊN', 'THANH VÂN', 'VÂN HỘI', 'HỢP THỊNH', 'TAM QUAN', 'ĐỒNG TĨNH', 'HOÀNG HOA', 'HOÀNG LÂU', 'HOÀNG ĐAN', 'AN HÒA'];
+const DIA_XA = { 'Tam Dương': ['HƯỚNG ĐẠO', 'ĐẠO TÚ', 'KIM LONG', 'HỢP HÒA'], 'Hội Thịnh': ['DUY PHIÊN', 'THANH VÂN', 'VÂN HỘI', 'HỢP THỊNH'], 'Tam Dương Bắc': ['TAM QUAN', 'ĐỒNG TĨNH', 'HOÀNG HOA'], 'Hoàng An': ['HOÀNG LÂU', 'HOÀNG ĐAN', 'AN HÒA'] };
+const DIA_NONE = '(Chưa ghi địa bàn)';
+function lev1(a, b) { if (a === b) return true; if (Math.abs(a.length - b.length) > 1) return false; let i = 0; while (i < a.length && a[i] === b[i]) i++; if (a.length === b.length) return a.slice(i + 1) === b.slice(i + 1); return a.length > b.length ? a.slice(i + 1) === b.slice(i) : a.slice(i) === b.slice(i + 1); }
+// Gộp các cách ghi sai chính tả/hoa thường của tên xã cũ (địa bàn) về một tên chuẩn
+function canonDia(v) {
+  const n = norm(v); if (!n) return DIA_NONE;
+  for (const d of DIA_BAN) if (norm(d) === n) return d;
+  for (const d of DIA_BAN) if (lev1(norm(d), n)) return d;
+  return String(v).replace(/\s+/g, ' ').trim().toUpperCase();
+}
+function canonMap(values) {
+  const cnt = {};
+  values.forEach(v => { if (!v) return; const k = norm(v), u = v.toUpperCase(); (cnt[k] = cnt[k] || {})[u] = (cnt[k][u] || 0) + 1; });
+  const out = {}; Object.keys(cnt).forEach(k => out[k] = Object.keys(cnt[k]).sort((a, b) => cnt[k][b] - cnt[k][a])[0]); return out;
+}
+// Gộp các cách ghi khác nhau của cùng một cán bộ (hoa/thường, dấu cách, sai dấu, tên ghi tắt); ghi nhiều tên -> lấy tên đầu
+function mergeCb(recs) {
+  const split = s => String(s || '').split(/\s*(?:,|;|\/|&|\+| và )\s*/i).map(x => x.trim()).filter(Boolean);
+  const cnt = {}, disp = {};
+  recs.forEach(r => { const p = split(r.cb)[0]; if (!p) return; const k = norm(p); cnt[k] = (cnt[k] || 0) + 1; (disp[k] = disp[k] || {})[p.replace(/\s+/g, ' ').toUpperCase()] = 1; });
+  const keys = Object.keys(cnt), to = {};
+  keys.forEach(k => {
+    const t = k.split(' '), last = t[t.length - 1];
+    let best = null;
+    keys.forEach(o => { if (o === k) return; const u = o.split(' ');
+      if (u[u.length - 1] === last && u[0] === t[0] && cnt[o] >= 20 && cnt[k] <= 3 && (!best || cnt[o] > cnt[best])) best = o; });
+    to[k] = best || k;
+  });
+  const name = {}; keys.forEach(k => { const f = to[k]; name[k] = Object.keys(disp[f])[0]; });
+  recs.forEach(r => { const p = split(r.cb)[0]; r.cbm = p ? name[norm(p)] : ''; });
+}
+function dedupe(recs) {
+  mergeCb(recs);
+  const cbC = canonMap(recs.map(r => r.cb)), lC = canonMap(recs.map(r => r.loai));
+  recs.forEach(r => { r.dia = canonDia(r.dia); });
+  recs.forEach(r => { r.cb = r.cb ? cbC[norm(r.cb)] : ''; r.loai = r.loai ? lC[norm(r.loai)] : ''; });
+  const unique = [], seen = {}, groups = [];
+  recs.forEach(r => {
+    const k = [alnum(r.ma), alnum(r.ten), alnum(r.to).replace(/^0+/, ''), alnum(r.thua).replace(/^0+/, ''), r.sdt.replace(/^0+/, '')];
+    const realMa = /\d{4,}/.test(k[0]) ? k[0] : '';
+    const others = [realMa, k[2], k[3], k[4]].filter(Boolean).length;
+    r.key = (k[1] && others >= 2) ? alnum(r.xa) + '#' + k.join('|') : null;
+    if (r.key && seen[r.key]) { const u0 = seen[r.key]; if (u0.dia === DIA_NONE && r.dia !== DIA_NONE) u0.dia = r.dia; u0.members.push(r); return; }
+    r.members = [r]; if (r.key) seen[r.key] = r; unique.push(r);
+  });
+  const merged = unique.map(r => {
+    const m = r.members;
+    if (m.length === 1) { r.dupCount = 0; return r; }
+    const u = Object.assign({}, r); u.dupCount = m.length - 1; u.cb = (m.find(x => x.cb) || {}).cb || ''; u.cbm = (m.find(x => x.cbm) || {}).cbm || '';
+    const nh = m.map(x => x.nhan).filter(Boolean).sort(), tr = m.map(x => x.trinh).filter(Boolean).sort();
+    u.nhan = nh[0] || ''; u.trinh = tr[0] || ''; u.daTrinh = m.some(x => x.daTrinh); u.rut = m.every(x => x.rut);
+    groups.push({ xa: r.xa, n: m.length, items: m }); return u;
+  });
+  groups.sort((a, b) => b.n - a.n);
+  return { unique: merged, groups };
+}
+
+// Hồ sơ KHÔNG có ngày nhận = đã rút hoặc trùng với hồ sơ khác (đã trình trước/sau) -> không tính vào tồn / đã trình
+function classifyNoDate(nodate, dated) {
+  const idx = { a: {}, b: {}, c: {} };
+  const put = (m, k, r) => { if (!k) return; const o = m[k]; if (!o || (!o.daTrinh && r.daTrinh)) m[k] = r; };
+  dated.forEach(r => {
+    const t = alnum(r.ten), x = alnum(r.xa), to = alnum(r.to).replace(/^0+/, ''), th = alnum(r.thua).replace(/^0+/, ''), ma = alnum(r.ma);
+    if (t && to && th) put(idx.a, x + '|' + t + '|' + to + '|' + th, r);
+    if (/\d{4,}/.test(ma)) put(idx.b, x + '|' + ma, r);
+    if (t && r.sdt) put(idx.c, x + '|' + t + '|' + r.sdt.replace(/^0+/, ''), r);
+  });
+  return nodate.map(r => {
+    const t = alnum(r.ten), x = alnum(r.xa), to = alnum(r.to).replace(/^0+/, ''), th = alnum(r.thua).replace(/^0+/, ''), ma = alnum(r.ma);
+    const m = (t && to && th && idx.a[x + '|' + t + '|' + to + '|' + th]) || (/\d{4,}/.test(ma) && idx.b[x + '|' + ma]) || (t && r.sdt && idx.c[x + '|' + t + '|' + r.sdt.replace(/^0+/, '')]) || null;
+    return { r, m, kind: 'rut' };
+  });
+}
+
+// ===================== ĐỐI CHIẾU VỚI TAB "THỐNG KÊ" =====================
+function numOrNull(v) { return typeof v === 'number' ? v : null; }
+function parseThongKe(rows) {
+  const find = pred => { for (let i = 0; i < rows.length; i++) for (let c = 0; c < Math.min(rows[i].length, 30); c++) if (pred(norm(rows[i][c]))) return [i, c]; return null; };
+  const h1 = find(n => n === 'DON VI HANH CHINH'); if (!h1) return null;
+  const out = { xa: {}, xaTotal: null, cb: [], cbTotal: null, chua: [], chuaTotal: null, cut: '2026-02-28', cutText: '' };
+  const hdr = norm((rows[h1[0]] || [])[h1[1] + 1]); const m = hdr.match(/(\d{1,2}) (\d{1,2}) (\d{4})/);
+  if (m) { out.cut = m[3] + '-' + pad(+m[2]) + '-' + pad(+m[1]); out.cutText = String((rows[h1[0]] || [])[h1[1] + 1]); }
+  for (let i = h1[0] + 2; i < rows.length; i++) {
+    const nm = str(rows[i][h1[1]]); if (!nm) continue;
+    const vals = []; for (let k = 1; k <= 8; k++) vals.push(numOrNull(rows[i][h1[1] + k]));
+    if (norm(nm) === 'TONG') { out.xaTotal = vals; break; }
+    out.xa[matchXa(nm) || nm] = vals;
+  }
+  const h2 = find(n => n === 'CAN BO THUC HIEN');
+  if (h2) for (let i = h2[0] + 1; i < rows.length; i++) {
+    const nm = str(rows[i][h2[1]]); if (!nm) continue; if (/^\d+$/.test(nm)) continue;
+    const v = [1, 2, 3].map(k => numOrNull(rows[i][h2[1] + k]));
+    if (norm(nm) === 'TONG') { out.cbTotal = v; break; }
+    out.cb.push({ name: nm, pre: v[0], post: v[1], tot: v[2] });
+  }
+  const h3 = find(n => n.startsWith('SO LUONG HO SO TUNG CAN BO CHUA THUC HIEN'));
+  if (h3) { const hr = h3[0] + 1; let nc = 1; (rows[hr] || []).forEach((v, c) => { if (norm(v) === 'TEN CAN BO') nc = c; });
+    for (let i = hr + 1; i < rows.length; i++) { const nm = str(rows[i][nc]); if (!nm) continue; const v = numOrNull(rows[i][nc + 1]);
+      if (norm(nm) === 'TONG') { out.chuaTotal = v; break; } out.chua.push({ name: nm, val: v }); } }
+  return out;
+}
+function nextIso(iso) { const d = new Date(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10) + 1); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+function auditCompute(rawAll, tk) {
+  const blank = rawAll.filter(r => r.blankDate), raw = rawAll.filter(r => !r.blankDate);
+  const cut = tk.cut, cut1 = nextIso(cut), isDa = r => !!r.dt, A = { cut, cut1 };
+  const cnt = (list, f) => list.reduce((n, r) => n + (f(r) ? 1 : 0), 0);
+  const pre = r => r.nhanAny && r.nhanAny <= cut, post = r => r.nhanAny && r.nhanAny >= cut1;
+  // theo xã
+  A.xa = {};
+  Object.keys(tk.xa).forEach(x => {
+    const l = raw.filter(r => r.xa === x), t1 = cnt(l, pre), d1 = cnt(l, r => pre(r) && isDa(r)), t2 = cnt(l, post), d2 = cnt(l, r => post(r) && isDa(r));
+    A.xa[x] = [t1, d1, t1 - d1, t2, d2, t2 - d2, d1 + d2, (t1 - d1) + (t2 - d2)];
+  });
+  // theo cán bộ (gộp các xã)
+  const names = tk.cb.filter(c => norm(c.name) !== 'RUT').map(c => c.name), keys = names.map(n => norm(n));
+  A.cb = {}; A.variants = {}; const same = (a, b) => a.normalize('NFC').toLowerCase() === b.normalize('NFC').toLowerCase();
+  names.forEach((n, i) => {
+    const k = keys[i], l = raw.filter(r => r.cb && norm(r.cb) === k);
+    const d1 = cnt(l, r => pre(r) && isDa(r)), d2 = cnt(l, r => post(r) && isDa(r));
+    A.cb[n] = [d1, d2, d1 + d2, cnt(l, r => !isDa(r))];
+    const v = {}; l.forEach(r => { const s = r.cbRaw.normalize('NFC'); if (!same(s, n)) v[s] = (v[s] || 0) + 1; });
+    A.variants[n] = v;
+  });
+  const rutL = raw.filter(r => r.rutS); A.rut = [cnt(rutL, pre), cnt(rutL, post), rutL.length + blank.length];
+  const inList = r => r.cb && keys.includes(norm(r.cb));
+  const da = raw.filter(r => isDa(r) && r.nhanAny);
+  A.noCb = cnt(da, r => !r.cb); A.otherCb = cnt(da, r => r.cb && !inList(r));
+  A.noCbChua = cnt(raw, r => !isDa(r) && !r.cb); A.otherCbChua = cnt(raw, r => !isDa(r) && r.cb && !inList(r));
+  A.otherNames = {}; raw.forEach(r => { if (r.cb && !inList(r)) A.otherNames[r.cbRaw.trim()] = (A.otherNames[r.cbRaw.trim()] || 0) + 1; });
+  A.variantRows = raw.filter(r => inList(r) && !same(r.cbRaw, names[keys.indexOf(norm(r.cb))]));
+  A.noDate = raw.filter(r => !r.nhanAny); A.badDate = raw.filter(r => r.nhanRaw && !r.nhanAny); A.oddDate = raw.filter(r => r.odd); A.far = raw.filter(r => r.far);
+  A.totalDa = [cnt(raw, r => pre(r) && isDa(r)), cnt(raw, r => post(r) && isDa(r))];
+  const ex = f => { const l = raw.filter(f), d1 = cnt(l, r => pre(r) && isDa(r)), d2 = cnt(l, r => post(r) && isDa(r)); return [d1, d2, d1 + d2, cnt(l, r => !isDa(r))]; };
+  A.extraNoCb = ex(r => !r.cb); A.extraOther = ex(r => r.cb && !inList(r));
+  A.variantDa = cnt(A.variantRows, r => isDa(r));
+  A.blank = blank; A.blankChua = {};
+  blank.forEach(r => { if (r.cb && inList(r) && !isDa(r)) { const n = names[keys.indexOf(norm(r.cb))]; A.blankChua[n] = (A.blankChua[n] || 0) + 1; } });
+  A.blankChuaTotal = blank.filter(r => !isDa(r)).length;
+  A.chuaAllXa = Object.keys(A.xa).reduce((n, x) => n + A.xa[x][7], 0);
+  A.chuaCbListed = names.length;
+  return A;
+}
+if (false) module.exports = { DIA_XA, canonDia, parseThongKe, auditCompute, detectSheet, buildRecords, dedupe, matchXa, KNOWN_XA, norm, colName, FIELD_DEFS, toIso };
+
+
+/* ===================== GIAO DIỆN ===================== */
+const APP = root.querySelector('.app');
+const $ = id => root.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const p2 = n => String(n).padStart(2, '0');
+const fmt = d => d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate());
+const dm = d => p2(d.getDate()) + '/' + p2(d.getMonth() + 1);
+const vn = iso => iso ? iso.slice(8, 10) + '/' + iso.slice(5, 7) + '/' + iso.slice(0, 4) : '';
+const addDays = (d, n) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + n);
+const S = { unit: 'week', ref: new Date(), xa: 'ALL', metric: 'trinh', q: '', tab: 'tong', open: {} };
+const ST = { sources: [], opts: { trinhByDate: true }, DATA: null, errors: [], needPerm: false };
+let DATA = null;
+
+// ---------- lưu trữ cục bộ ----------
+const DB = {
+  db: null,
+  open() { return new Promise(res => { try { const q = indexedDB.open('qlhs', 1); q.onupgradeneeded = () => q.result.createObjectStore('src', { keyPath: 'id' }); q.onsuccess = () => { DB.db = q.result; res(true); }; q.onerror = () => res(false); } catch (e) { res(false); } }); },
+  op(mode, fn) { return new Promise(res => { if (!DB.db) return res(null); try { const q = fn(DB.db.transaction('src', mode).objectStore('src')); q.onsuccess = () => res(q.result); q.onerror = () => res(null); } catch (e) { res(null); } }); },
+  all() { return DB.op('readonly', s => s.getAll()).then(r => r || []); },
+  put(o) { return DB.op('readwrite', s => s.put(o)); },
+  del(id) { return DB.op('readwrite', s => s.delete(id)); }
+};
+const lsGet = () => { try { return JSON.parse(localStorage.getItem('qlhs.cfg') || '{}'); } catch (e) { return {}; } };
+function saveCfg(src) {
+  try {
+    const st = lsGet(); src.sheets.forEach(sh => { st[src.name + '|' + sh.name] = { he: sh.cfg.he, map: sh.cfg.map, xa: sh.cfg.xa, include: sh.cfg.include }; });
+    localStorage.setItem('qlhs.cfg', JSON.stringify(st)); localStorage.setItem('qlhs.opts', JSON.stringify(ST.opts));
+  } catch (e) {}
+}
+const persist = src => DB.put({ id: src.name, name: src.name, size: src.size, lastModified: src.lastModified, handle: src.handle || null, loadedAt: src.loadedAt, sheets: src.sheets });
+
+// ---------- thời gian ----------
+function isoWeek(d) { const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const n = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - n); return Math.ceil(((t - new Date(Date.UTC(t.getUTCFullYear(), 0, 1))) / 864e5 + 1) / 7); }
+function span(ref, unit) {
+  const r = new Date(ref.getFullYear(), ref.getMonth(), ref.getDate()); let s, e, label, short;
+  if (unit === 'week') { s = addDays(r, -((r.getDay() + 6) % 7)); e = addDays(s, 6); label = 'Tuần ' + isoWeek(s) + ' (' + dm(s) + ' – ' + dm(e) + '/' + e.getFullYear() + ')'; short = 'T' + isoWeek(s) + ' ' + dm(s); }
+  else if (unit === 'month') { s = new Date(r.getFullYear(), r.getMonth(), 1); e = new Date(r.getFullYear(), r.getMonth() + 1, 0); label = 'Tháng ' + (r.getMonth() + 1) + '/' + r.getFullYear(); short = (r.getMonth() + 1) + '/' + r.getFullYear(); }
+  else { s = new Date(r.getFullYear(), 0, 1); e = new Date(r.getFullYear(), 11, 31); label = 'Năm ' + r.getFullYear(); short = String(r.getFullYear()); }
+  return { s: fmt(s), e: fmt(e), label, short };
+}
+function shift(ref, unit, n) { if (unit === 'week') return addDays(ref, 7 * n); if (unit === 'month') return new Date(ref.getFullYear(), ref.getMonth() + n, 1); return new Date(ref.getFullYear() + n, 0, 1); }
+function pstat(list, s, e) {
+  let a = 0, b = 0, c = 0; const td = fmt(new Date());
+  list.forEach(r => {
+    if (r.nhan && r.nhan >= s && r.nhan <= e) a++;
+    if (r.trinh && r.trinh >= s && r.trinh <= e) b++;
+    if (r.rut && !r.daTrinh) return;
+    if (r.nhan) { if (r.nhan <= e && (!r.daTrinh || (r.trinh && r.trinh > e))) c++; }
+    else if (!r.daTrinh && e >= td) c++;
+  });
+  return { a, b, c };
+}
+const recs = () => DATA ? DATA.records : [];
+const nodateOf = f => DATA ? DATA.noDate.filter(x => f(x.r)).length : 0;
+const rutOf = (list, f) => list.filter(r => r.rut && !r.daTrinh).length + nodateOf(f);
+const inXa = r => S.xa === 'ALL' || r.xa === S.xa;
+const cbName = r => r.cbm || r.cb || '(Chưa phân công)';
+const bar = (v, max) => max ? `<i style="width:${Math.round(100 * v / max)}%"></i>` : '';
+function xas() { const s = [...new Set(recs().map(r => r.xa))]; return [...KNOWN_XA.filter(x => s.includes(x)), ...s.filter(x => !KNOWN_XA.includes(x)).sort()]; }
+const where = r => esc(r.src) + ' · dòng ' + r.row;
+
+// ---------- xử lý dữ liệu ----------
+function rebuild() {
+  const limit = fmt(addDays(new Date(), 2)); let all = [], warn = [], bad = 0;
+  ST.errors.forEach(e => warn.push(e));
+  ST.sources.forEach(src => src.sheets.forEach(sh => {
+    if (!sh.cfg.include) return;
+    const c = sh.cfg, lab = src.name + ' · ' + sh.name;
+    if (!c.map || (c.map.ten == null)) { warn.push('"' + lab + '": chưa chọn cột Tên hồ sơ – vào tab Nguồn dữ liệu để chọn.'); return; }
+    if (!c.xa) { warn.push('"' + lab + '": chưa chọn xã – vào tab Nguồn dữ liệu.'); return; }
+    const b = buildRecords(sh.rows, c, lab, limit, ST.opts); all = all.concat(b.recs); bad += b.bad;
+    [['cb', 'Cán bộ xử lý'], ['nhan', 'Ngày nhận']].forEach(([k, n]) => { if (c.map[k] == null) warn.push('"' + lab + '": chưa chọn cột ' + n + '.'); });
+    if (c.map.status == null && !(c.map.trinh && c.map.trinh.length)) warn.push('"' + lab + '": chưa có cột "Đã trình" hoặc ngày trình – mọi hồ sơ sẽ tính là tồn.');
+  }));
+  const datedAll = all.filter(r => !r.blankDate), blankAll = all.filter(r => r.blankDate);
+  const d = dedupe(datedAll), noDate = d.unique.filter(r => !r.nhan).length;
+  const nodateCls = classifyNoDate(blankAll, datedAll);
+  if (bad) warn.push(bad + ' dòng có ngày nhận nhập sai (ngoài ' + CFG.MIN_YEAR + '–' + CFG.MAX_YEAR + ' hoặc ở tương lai), đã coi là chưa có ngày nhận.');
+  if (blankAll.length) warn.push(blankAll.length + ' hồ sơ không có ngày nhận: tổng hợp vào RÚT, loại khỏi các bảng đã trình và tồn (' + nodateCls.filter(x => x.m).length + ' hồ sơ trong số này có hồ sơ trùng đã nhập đủ ngày). Xem tab "Hồ sơ trùng / rút".');
+  if (noDate) warn.push(noDate + ' hồ sơ có ngày nhận gõ sai không đọc được: chỉ tính vào "tồn hiện tại", không vào thống kê theo tuần/tháng.');
+  let tk = null;
+  ST.sources.forEach(src => src.sheets.forEach(sh => { if (!tk && norm(sh.name).startsWith('THONG KE')) tk = parseThongKe(sh.rows); }));
+  DATA = { records: d.unique, duplicates: d.groups, warnings: warn, rawCount: all.length, updated: Date.now(), raw: all, noDate: nodateCls, tk, audit: tk && all.length ? auditCompute(all, tk) : null };
+  if (S.xa !== 'ALL' && !xas().includes(S.xa)) S.xa = 'ALL';
+  render();
+}
+
+// ---------- nạp file ----------
+async function loadFile(file, handle) {
+  setLive('load', 'Đang đọc ' + file.name + '…');
+  try {
+    const buf = await file.arrayBuffer(), sheets = await readWorkbook(buf, file.name);
+    const old = ST.sources.find(s => s.name === file.name), store = lsGet();
+    const list = sheets.filter(s => s.rows.some(r => r.length)).map(s => {
+      const prev = old && old.sheets.find(x => x.name === s.name), saved = prev ? prev.cfg : store[file.name + '|' + s.name], auto = detectSheet(s.rows);
+      let cfg;
+      if (saved && saved.map) cfg = { ...auto, he: saved.he, map: { ...saved.map, dia: saved.map.dia !== undefined ? saved.map.dia : auto.map.dia }, xa: saved.xa, include: saved.include, ok: true };
+      else { cfg = auto; cfg.xa = matchXa(s.name) || matchXa(file.name) || (auto.map.xa != null ? '__COL__' : ''); cfg.include = !!(auto.ok && cfg.xa) && !s.hidden; }
+      return { name: s.name, rows: s.rows, cfg };
+    });
+    const src = { name: file.name, size: file.size, lastModified: file.lastModified, handle: handle || (old && old.handle) || null, loadedAt: Date.now(), watch: !!(handle || (old && old.watch)), sheets: list };
+    ST.sources = ST.sources.filter(s => s.name !== file.name).concat(src);
+    ST.errors = ST.errors.filter(e => !e.startsWith(file.name + ':'));
+    saveCfg(src); persist(src);
+  } catch (e) { ST.errors = ST.errors.filter(x => !x.startsWith(file.name + ':')); ST.errors.push(file.name + ': không đọc được – ' + e.message); }
+  rebuild(); setLive('ok');
+}
+async function pickFiles() {
+  if (window.showOpenFilePicker) {
+    try {
+      const hs = await window.showOpenFilePicker({ multiple: true, types: [{ description: 'Bảng tính', accept: { 'application/*': ['.xlsx', '.xlsm', '.xls', '.ods'], 'text/*': ['.csv', '.tsv', '.txt', '.html', '.htm'] } }] });
+      for (const h of hs) await loadFile(await h.getFile(), h);
+    } catch (e) { if (e.name !== 'AbortError') $('fileInput').click(); }
+  } else $('fileInput').click();
+}
+async function checkWatch() {
+  let changed = false;
+  for (const src of ST.sources) {
+    if (!src.handle || !src.watch) continue;
+    try {
+      const f = await src.handle.getFile();
+      if (f.lastModified !== src.lastModified) { await loadFile(f, src.handle); changed = true; }
+    } catch (e) { /* file đang được ghi hoặc bị di chuyển – thử lại lần sau */ }
+  }
+  setLive('ok');
+}
+async function reconnect() {
+  for (const src of ST.sources) if (src.handle) { try { if ((await src.handle.requestPermission({ mode: 'read' })) === 'granted') src.watch = true; } catch (e) {} }
+  ST.needPerm = false; await checkWatch(); render();
+}
+async function restore() {
+  await DB.open();
+  try { ST.opts = { ...ST.opts, ...JSON.parse(localStorage.getItem('qlhs.opts') || '{}') }; } catch (e) {}
+  const saved = await DB.all();
+  for (const o of saved) {
+    const src = { ...o, watch: false };
+    if (src.handle) { try { src.watch = (await src.handle.queryPermission({ mode: 'read' })) === 'granted'; if (!src.watch) ST.needPerm = true; } catch (e) { src.handle = null; } }
+    ST.sources.push(src);
+  }
+  rebuild();
+}
+
+// ---------- Google Drive (qua cầu nối Apps Script) ----------
+const GD = Object.assign({ url: '', key: '', link: '', id: '', every: 2, on: false, mod: 0, last: 0, status: '', busy: false }, (() => { try { return JSON.parse(localStorage.getItem('qlhs.gd') || '{}'); } catch (e) { return {}; } })());
+GD.busy = false;
+const gdSave = () => { try { localStorage.setItem('qlhs.gd', JSON.stringify({ url: GD.url, key: GD.key, link: GD.link, id: GD.id, every: GD.every, on: GD.on, mod: GD.mod })); } catch (e) {} };
+function gdId(s) { s = String(s || '').trim(); const m = s.match(/\/d\/([\w-]{20,})/) || s.match(/[?&]id=([\w-]{20,})/) || s.match(/^([\w-]{20,})$/); return m ? m[1] : ''; }
+async function gdCall(params) {
+  const q = new URLSearchParams(Object.assign({ key: GD.key, id: GD.id }, params)).toString();
+  const viaPy = /^https?:$/.test(location.protocol) && /^(127\.0\.0\.1|localhost)$/.test(location.hostname);
+  const r = viaPy ? await fetch('/api/drive?base=' + encodeURIComponent(GD.url) + '&' + q)
+                  : await fetch(GD.url + (GD.url.includes('?') ? '&' : '?') + q, { redirect: 'follow' });
+  if (!r.ok) throw new Error('máy chủ trả về mã ' + r.status);
+  let j; try { j = await r.json(); } catch (e) { throw new Error('phản hồi không phải dữ liệu hợp lệ – kiểm tra lại đường dẫn Web App và quyền "Bất kỳ ai"'); }
+  if (j.error) throw new Error(j.error === 'unauthorized' ? 'mật khẩu cầu nối không đúng' : j.error);
+  return j;
+}
+async function syncDrive(force) {
+  if (GD.busy) return; if (!GD.url || !GD.id) { GD.status = 'Chưa nhập đủ thông tin kết nối.'; return render(); }
+  GD.busy = true; GD.status = 'Đang kiểm tra Google Drive…'; if (S.tab === 'src') render();
+  try {
+    const meta = await gdCall({ action: 'meta' });
+    if (!force && meta.modified === GD.mod && ST.sources.some(s => s.fromDrive)) { GD.status = 'Không có thay đổi · kiểm tra lúc ' + new Date().toLocaleTimeString('vi-VN'); }
+    else {
+      GD.status = 'Đang tải "' + meta.name + '"…'; if (S.tab === 'src') render();
+      const full = await gdCall({ action: 'get' }), bin = atob(full.data), u8 = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      const f = new File([u8], full.name, { lastModified: full.modified });
+      await loadFile(f, null); const s = ST.sources.find(x => x.name === full.name); if (s) s.fromDrive = true;
+      GD.mod = full.modified; gdSave(); GD.status = 'Đã cập nhật từ Drive lúc ' + new Date().toLocaleTimeString('vi-VN') + ' (file sửa lúc ' + new Date(full.modified).toLocaleString('vi-VN') + ')';
+    }
+    GD.last = Date.now();
+  } catch (e) { GD.status = 'Lỗi: ' + (e && e.message || e); }
+  GD.busy = false; setLive('ok'); render();
+}
+function driveCard() {
+  return `<div class="card"><h2>Tự động lấy dữ liệu từ Google Drive ${GD.on ? '<span class="badge ok">đang bật</span>' : '<span class="badge n">đang tắt</span>'}<span class="r"><button class="mini" data-act="gdhelp">Hướng dẫn kết nối</button></span></h2>
+   <div class="gdform"><label>Đường dẫn Web App (cầu nối Apps Script)<input id="gdUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" value="${esc(GD.url)}"></label>
+   <label>Mật khẩu cầu nối<input id="gdKey" type="password" value="${esc(GD.key)}"></label>
+   <label>Link hoặc ID file hồ sơ trên Drive<input id="gdLink" type="text" placeholder="https://docs.google.com/spreadsheets/d/…" value="${esc(GD.link)}"></label>
+   <label>Tự kiểm tra mỗi (phút)<input id="gdEvery" type="number" min="1" max="60" value="${GD.every}"></label></div>
+   <div style="padding:0 14px 12px"><button class="btn big sm" data-act="gdstart">${GD.on ? 'Lưu &amp; lấy dữ liệu ngay' : 'Bật tự động lấy từ Drive'}</button>
+   ${GD.on ? '<button class="mini" data-act="gdstop">Tắt tự động</button>' : ''}<span class="sub" style="margin-left:10px">${esc(GD.status)}</span></div></div>`;
+}
+function gdHelp() {
+  uiAlert('KẾT NỐI GOOGLE DRIVE (làm 1 lần, khoảng 3 phút)\n\n1. Mở script.google.com > Dự án mới, dán toàn bộ nội dung file Cau_noi_Drive.gs, đổi dòng MAT_KHAU thành mật khẩu của bạn.\n2. Triển khai > Triển khai mới > Ứng dụng web: Thực thi với tư cách "Tôi", Người có quyền truy cập "Bất kỳ ai". Cho phép các quyền được hỏi.\n3. Copy đường dẫn Web App (…/exec) dán vào đây cùng mật khẩu và link file hồ sơ.\n4. Bấm "Bật tự động lấy từ Drive". Từ đó tool tự kiểm tra và nạp lại khi file trên Drive được sửa.\n\nLưu ý: chỉ ai có cả đường dẫn lẫn mật khẩu mới lấy được dữ liệu.');
+}
+setInterval(() => { if (GD.on && !document.hidden && Date.now() - GD.last >= Math.max(1, +GD.every || 2) * 60000) syncDrive(false); }, 15000);
+
+// ---------- hiển thị ----------
+function renderKpis(P) {
+  const all = recs().filter(inXa), st = pstat(all, P.s, P.e), tonNow = all.filter(r => !r.daTrinh && !r.rut).length;
+  $('kpis').innerHTML = `<div class="kpi ok"><b>${st.b}</b><span>Đã trình trong kỳ</span></div><div class="kpi ton"><b>${st.c}</b><span>Tồn cuối kỳ</span></div><div class="kpi ton"><b>${tonNow}</b><span>Tồn hiện tại (chưa trình)</span></div>`;
+}
+function diaList(list, xa) {
+  const known = DIA_XA[xa] || [], have = [...new Set(list.filter(r => r.xa === xa).map(r => r.dia))];
+  return [...known.filter(d => have.includes(d)), ...have.filter(d => !known.includes(d) && d !== DIA_NONE).sort(), ...(have.includes(DIA_NONE) ? [DIA_NONE] : [])];
+}
+function viewDiaBan(P) {
+  const all = recs().filter(inXa), X = xas().filter(x => S.xa === 'ALL' || x === S.xa); let rows = '';
+  X.forEach(x => {
+    const lx = all.filter(r => r.xa === x), sx = pstat(lx, P.s, P.e), tx = lx.filter(r => !r.daTrinh && !r.rut).length;
+    rows += `<tr class="total"><td>Xã ${esc(x)}</td><td>${sx.b}</td><td>${sx.c}</td><td>${tx}</td></tr>`;
+    diaList(all, x).forEach(d => { const l = lx.filter(r => r.dia === d), s = pstat(l, P.s, P.e), tn = l.filter(r => !r.daTrinh && !r.rut).length;
+      rows += `<tr><td style="padding-left:26px">Địa bàn ${esc(d)}</td><td class="okc">${s.b || '–'}</td><td class="tonc">${s.c || '–'}</td><td>${tn || '–'}</td></tr>`; });
+  });
+  return `<div class="card"><h2>Chi tiết theo địa bàn (xã cũ) – ${esc(P.label)} <span class="sub">${S.xa === 'ALL' ? '(tất cả xã)' : '(xã ' + esc(S.xa) + ')'} · tên xã cũ ghi sai chính tả đã gộp</span> <button class="mini" data-act="csvDia">Xuất CSV</button></h2>
+   <table><tr><th>Xã / Địa bàn</th><th>Đã trình trong kỳ</th><th>Tồn cuối kỳ</th><th>Tồn hiện tại</th></tr>${rows || '<tr><td colspan="4" class="empty">Chưa có dữ liệu</td></tr>'}</table></div>`;
+}
+function exportDia() {
+  const P = span(S.ref, S.unit), all = recs().filter(inXa), out = [['Xã', 'Địa bàn', 'Đã trình trong kỳ', 'Tồn cuối kỳ', 'Tồn hiện tại']];
+  xas().filter(x => S.xa === 'ALL' || x === S.xa).forEach(x => diaList(all, x).forEach(d => { const l = all.filter(r => r.xa === x && r.dia === d), s = pstat(l, P.s, P.e); out.push([x, d, s.b, s.c, l.filter(r => !r.daTrinh && !r.rut).length]); }));
+  csvDownload('theo-dia-ban-' + P.s + '.csv', out);
+}
+function viewTong(P) {
+  const all = recs(), X = xas();
+  let rows = '', T = { b: 0, c: 0, t: 0 }; const mx = Math.max(1, ...X.map(x => pstat(all.filter(r => r.xa === x), P.s, P.e).c));
+  X.forEach(x => { const l = all.filter(r => r.xa === x), s = pstat(l, P.s, P.e), tn = l.filter(r => !r.daTrinh && !r.rut).length; T.b += s.b; T.c += s.c; T.t += tn;
+    rows += `<tr><td>${esc(x)}</td><td class="okc">${s.b}</td><td class="tonc">${s.c}${bar(s.c, mx)}</td><td>${tn}</td></tr>`; });
+  rows += `<tr class="total"><td>Toàn chi nhánh</td><td>${T.b}</td><td>${T.c}</td><td>${T.t}</td></tr>`;
+  let h = `<div class="card"><h2>Theo xã – ${esc(P.label)}</h2><table><tr><th>Xã</th><th>Đã trình trong kỳ</th><th>Tồn cuối kỳ</th><th>Tồn hiện tại</th></tr>${rows}</table></div>`;
+  const list = all.filter(inXa), cbs = [...new Set(list.map(cbName))].sort((a, b) => a.localeCompare(b, 'vi'));
+  const mx2 = Math.max(1, ...cbs.map(c => pstat(list.filter(r => cbName(r) === c), P.s, P.e).c));
+  let r2 = ''; const tot = { b: 0, c: 0 }, tx = X.map(() => 0);
+  cbs.forEach(c => { const l = list.filter(r => cbName(r) === c), s = pstat(l, P.s, P.e); tot.b += s.b; tot.c += s.c;
+    const per = X.map((x, i) => { const v = pstat(l.filter(r => r.xa === x), P.s, P.e).c; tx[i] += v; return v; });
+    r2 += `<tr><td>${esc(c)}</td><td class="okc">${s.b}</td><td class="tonc">${s.c}${bar(s.c, mx2)}</td>${per.map(v => `<td>${v || '–'}</td>`).join('')}</tr>`; });
+  r2 += `<tr class="total"><td>Tổng</td><td>${tot.b}</td><td>${tot.c}</td>${tx.map(v => `<td>${v}</td>`).join('')}</tr>`;
+  h += `<div class="card"><h2>Theo cán bộ xử lý – ${esc(P.label)} <span class="sub">${S.xa === 'ALL' ? '(tất cả xã)' : '(xã ' + esc(S.xa) + ')'} · các cột bên phải: tồn cuối kỳ theo xã · tên cán bộ ghi khác nhau đã gộp làm một</span> <button class="mini" data-act="csvCb">Xuất CSV</button></h2>
+   <table><tr><th>Cán bộ</th><th>Đã trình trong kỳ</th><th>Tồn cuối kỳ</th>${X.map(x => `<th>Tồn ${esc(x)}</th>`).join('')}</tr>${r2}</table></div>`;
+  return h + viewDiaBan(P);
+}
+function viewTime() {
+  if (S.metric === 'nhan') S.metric = 'trinh';
+  const n = S.unit === 'week' ? 8 : S.unit === 'month' ? 12 : 5, cols = [];
+  for (let i = n - 1; i >= 0; i--) cols.push(span(shift(S.ref, S.unit, -i), S.unit));
+  const list = recs().filter(inXa), cbs = [...new Set(list.map(cbName))].sort((a, b) => a.localeCompare(b, 'vi')), key = { trinh: 'b', ton: 'c' }[S.metric];
+  const seg = `<div class="chips" style="padding:10px 14px"><div class="seg" id="metSeg"><button data-m="trinh" class="${S.metric === 'trinh' ? 'on' : ''}">Đã trình</button><button data-m="ton" class="${S.metric === 'ton' ? 'on' : ''}">Tồn cuối kỳ</button></div></div>`;
+  let body = ''; const totals = cols.map(() => 0);
+  cbs.forEach(c => { const l = list.filter(r => cbName(r) === c); body += `<tr><td>${esc(c)}</td>${cols.map((p, i) => { const v = pstat(l, p.s, p.e)[key]; totals[i] += v; return `<td>${v || '–'}</td>`; }).join('')}</tr>`; });
+  body += `<tr class="total"><td>Tổng</td>${totals.map(v => `<td>${v}</td>`).join('')}</tr>`;
+  const xr = xas().map(x => { const l = list.filter(r => r.xa === x); return `<tr><td>${esc(x)}</td>${cols.map(p => `<td>${pstat(l, p.s, p.e)[key] || '–'}</td>`).join('')}</tr>`; }).join('');
+  let dr = ''; xas().filter(x => S.xa === 'ALL' || x === S.xa).forEach(x => { const lx = list.filter(r => r.xa === x);
+    dr += `<tr class="total"><td>Xã ${esc(x)}</td>${cols.map(p => `<td>${pstat(lx, p.s, p.e)[key] || '–'}</td>`).join('')}</tr>`;
+    diaList(list, x).forEach(d => { const l = lx.filter(r => r.dia === d); dr += `<tr><td style="padding-left:26px">${esc(d)}</td>${cols.map(p => `<td>${pstat(l, p.s, p.e)[key] || '–'}</td>`).join('')}</tr>`; }); });
+  const head = `<tr><th>#</th>${cols.map(p => `<th>${esc(p.short)}</th>`).join('')}</tr>`;
+  const unit = S.unit === 'week' ? 'tuần' : S.unit === 'month' ? 'tháng' : 'năm';
+  return `<div class="card"><h2>Từng cán bộ theo ${unit} <span class="sub">${S.xa === 'ALL' ? '(tất cả xã)' : '(xã ' + esc(S.xa) + ')'}</span></h2>${seg}<table>${head.replace('#', 'Cán bộ')}${cbs.length ? body : '<tr><td class="empty" colspan="' + (n + 1) + '">Chưa có dữ liệu</td></tr>'}</table></div>
+   <div class="card"><h2>Từng xã theo ${unit}</h2><table>${head.replace('#', 'Xã')}${xr}</table></div>
+   <div class="card"><h2>Từng địa bàn (xã cũ) theo ${unit}</h2><table>${head.replace('#', 'Địa bàn')}${dr}</table></div>`;
+}
+function tonList() {
+  const td = new Date(); td.setHours(0, 0, 0, 0); const q = S.q.toLowerCase();
+  return recs().filter(r => !r.daTrinh && !r.rut && inXa(r)).map(r => ({ r, days: r.nhan ? Math.round((td - new Date(r.nhan + 'T00:00:00')) / 864e5) : null }))
+    .filter(o => !q || [o.r.ma, o.r.ten, o.r.to, o.r.thua, o.r.sdt, o.r.cb, o.r.xa, o.r.dia].join(' ').toLowerCase().includes(q))
+    .sort((a, b) => (b.days == null ? -1 : b.days) - (a.days == null ? -1 : a.days));
+}
+function viewTon() {
+  const list = tonList();
+  const rows = list.slice(0, 500).map(({ r, days }) => `<tr><td>${esc(r.xa)}</td><td class="l">${esc(r.dia)}</td><td class="l">${esc(r.ma)}</td><td class="l">${esc(r.ten)}</td><td>${esc(r.to)}/${esc(r.thua)}</td><td class="l">${esc(r.sdt)}</td><td class="l">${esc(cbName(r))}</td><td>${vn(r.nhan)}</td><td class="tonc">${days == null ? '?' : days}</td><td>${r.dupCount ? `<span class="badge d">trùng ×${r.dupCount + 1}</span>` : ''}</td><td class="l src">${where(r)}</td></tr>`).join('');
+  return `<div class="card"><h2>Hồ sơ tồn (chưa trình) – ${list.length} hồ sơ <span class="sub">hồ sơ trùng chỉ tính 1${list.length > 500 ? ' · hiển thị 500 hồ sơ lâu nhất, xuất CSV để xem đủ' : ''}</span> <button class="mini" data-act="csvTon">Xuất CSV</button></h2>
+   <div style="padding:10px 14px"><input type="search" id="q" placeholder="Tìm mã, tên, tờ, thửa, SĐT, cán bộ…" value="${esc(S.q)}"></div>
+   <table><tr><th>Xã</th><th class="l">Địa bàn</th><th class="l">Mã hồ sơ</th><th class="l">Tên</th><th>Tờ/Thửa</th><th class="l">SĐT</th><th class="l">Cán bộ</th><th>Ngày nhận</th><th>Ngày tồn</th><th></th><th class="l">Nguồn</th></tr>${rows || '<tr><td colspan="11" class="empty">Không có hồ sơ tồn</td></tr>'}</table></div>`;
+}
+function viewNoDate() {
+  const l = DATA.noDate.filter(x => S.xa === 'ALL' || x.r.xa === S.xa); if (!l.length) return '';
+  const nt = l.filter(x => x.kind === 'trung').length;
+  return `<div class="card"><h2>Hồ sơ KHÔNG có ngày nhận – ${l.length} hồ sơ <span class="sub">tổng hợp vào RÚT, loại khỏi đã trình và tồn · ${nt} hồ sơ có hồ sơ trùng đã nhập đủ ngày</span> <button class="mini" data-act="csvNd">Xuất CSV</button></h2>
+   <table><tr><th class="l">Nguồn</th><th class="l">Mã hồ sơ</th><th class="l">Tên</th><th>Tờ/Thửa</th><th class="l">SĐT</th><th class="l">Cán bộ</th><th>Ghi trạng thái</th><th class="l">Tính vào</th><th class="l">Có hồ sơ trùng (đã nhập ngày)</th></tr>
+   ${l.slice(0, 400).map(x => `<tr><td class="l src">${where(x.r)}</td><td class="l">${esc(x.r.ma)}</td><td class="l">${esc(x.r.ten)}</td><td>${esc(x.r.to)}/${esc(x.r.thua)}</td><td class="l">${esc(x.r.sdt)}</td><td class="l">${esc(x.r.cb)}</td><td>${x.r.dt || x.r.daTrinh ? 'đã trình' : 'chưa'}</td><td class="l"><span class="badge n">Rút</span></td><td class="l src">${x.m ? where(x.m) + ' (' + (x.m.daTrinh ? 'đã trình' : 'chưa trình') + ', nhận ' + vn(x.m.nhan) + ')' : ''}</td></tr>`).join('')}</table></div>`;
+}
+function viewDup() {
+  const g = DATA.duplicates.filter(x => S.xa === 'ALL' || x.xa === S.xa);
+  if (!g.length) return viewNoDate() + `<div class="card"><div class="empty">Không phát hiện hồ sơ trùng trong cùng một xã.<br><span class="sub">Quy tắc: cùng xã và trùng đồng thời mã hồ sơ + tên + tờ + thửa + số điện thoại.</span></div></div>`;
+  return `<div class="card"><h2>${g.length} nhóm hồ sơ trùng <span class="sub">mỗi nhóm chỉ tính 1 hồ sơ khi tổng hợp${g.length > 150 ? ' · hiển thị 150 nhóm lớn nhất' : ''}</span></h2>` + g.slice(0, 150).map(x => `<div class="grp"><div class="why"><span class="badge d">Trùng mã + tên + tờ + thửa + SĐT</span> · xã ${esc(x.xa)} · ${x.n} dòng</div>
+   <table><tr><th class="l">Nguồn</th><th class="l">Mã hồ sơ</th><th class="l">Tên</th><th>Tờ/Thửa</th><th class="l">SĐT</th><th class="l">Cán bộ</th><th>Ngày nhận</th><th>Đã trình</th></tr>
+   ${x.items.map(i => `<tr><td class="l src">${where(i)}</td><td class="l">${esc(i.ma)}</td><td class="l">${esc(i.ten)}</td><td>${esc(i.to)}/${esc(i.thua)}</td><td class="l">${esc(i.sdt)}</td><td class="l">${esc(i.cb)}</td><td>${vn(i.nhan)}</td><td>${i.daTrinh ? 'có' : '<span class="badge t">chưa</span>'}</td></tr>`).join('')}</table></div>`).join('') + '</div>' + viewNoDate();
+}
+function colOptions(sh, sel) {
+  const { labP, labC } = headerLabels(sh.rows, sh.cfg.he, sh.cfg.ncol || 30); const out = [];
+  for (let c = 0; c < (sh.cfg.ncol || 30); c++) { const lab = (labP[c] || labC[c] || '').slice(0, 34); out.push(`<option value="${c}" ${sel.includes(c) ? 'selected' : ''}>${colName(c)}${lab ? ' · ' + esc(lab) : ''}</option>`); }
+  return out.join('');
+}
+function viewSrc() {
+  if (!ST.sources.length) return '';
+  let h = `<div class="card"><h2>Tùy chọn</h2><div style="padding:10px 14px"><label><input type="checkbox" id="optTrinh" ${ST.opts.trinhByDate ? 'checked' : ''}> Hồ sơ đã có ngày trình / ký lãnh đạo thì tính là đã trình (kể cả khi chưa đánh dấu "Đã trình")</label></div></div>`;
+  ST.sources.forEach((src, si) => {
+    const watch = src.handle ? (src.watch ? '<span class="badge ok">đang tự theo dõi file</span>' : '<span class="badge d">chưa cấp quyền theo dõi</span>') : '<span class="badge n">nạp thủ công</span>';
+    h += `<div class="card"><h2>${esc(src.name)} <span class="sub">${(src.size / 1024).toFixed(0)} KB · nạp lúc ${new Date(src.loadedAt).toLocaleTimeString('vi-VN')}</span> ${watch}<span class="r"><button class="mini" data-act="reload" data-si="${si}">Nạp lại</button> <button class="mini danger" data-act="remove" data-si="${si}">Gỡ file</button></span></h2>
+     <table><tr><th>Dùng</th><th class="l">Sheet</th><th>Số dòng</th><th class="l">Xã</th><th>Dòng tiêu đề</th><th></th></tr>`;
+    src.sheets.forEach((sh, hi) => {
+      const k = si + '_' + hi, c = sh.cfg, xaOpts = ['', ...KNOWN_XA, '__COL__'];
+      if (c.xa && !xaOpts.includes(c.xa)) xaOpts.push(c.xa);
+      const n = buildCount(sh);
+      h += `<tr><td><input type="checkbox" data-act="inc" data-si="${si}" data-hi="${hi}" ${c.include ? 'checked' : ''}></td><td class="l">${esc(sh.name)}</td><td>${n}</td>
+        <td class="l"><select data-act="xa" data-si="${si}" data-hi="${hi}">${xaOpts.map(x => `<option value="${esc(x)}" ${x === (c.xa || '') ? 'selected' : ''}>${x === '' ? '— chọn xã —' : x === '__COL__' ? 'Lấy từ cột "Xã"' : esc(x)}</option>`).join('')}<option value="__NEW__">Xã khác…</option></select></td>
+        <td><input type="number" min="1" max="30" style="width:60px" value="${c.he + 1}" data-act="he" data-si="${si}" data-hi="${hi}"></td>
+        <td><button class="mini" data-act="map" data-k="${k}">${S.open[k] ? 'Ẩn cột' : 'Chọn cột'}</button></td></tr>`;
+      if (S.open[k]) {
+        h += `<tr><td colspan="6" class="l mapbox"><div class="mapgrid">` + FIELD_DEFS.map(f => {
+          const cur = f.multi ? (c.map[f.k] || []) : (c.map[f.k] != null ? [c.map[f.k]] : []);
+          return `<label>${f.label}<select data-act="col" data-si="${si}" data-hi="${hi}" data-f="${f.k}" ${f.multi ? 'multiple size="4"' : ''}>${f.multi ? '' : '<option value="">— không dùng —</option>'}${colOptions(sh, cur)}</select></label>`;
+        }).join('') + `</div><button class="mini" data-act="redetect" data-si="${si}" data-hi="${hi}">Tự nhận diện lại</button></td></tr>`;
+      }
+    });
+    h += '</table></div>';
+  });
+  return h;
+}
+function cmpCell(seed, tool) {
+  if (seed == null) return `<td class="muted">${tool}</td>`;
+  return seed === tool ? `<td>${tool}</td>` : `<td class="bad">${seed} → <b>${tool}</b></td>`;
+}
+const vis = s => String(s).replace(/ +$/, m => '␣'.repeat(m.length)).replace(/^ +/, m => '␣'.repeat(m.length));
+function viewAudit() {
+  if (!DATA.tk) return `<div class="card"><div class="empty"><h3>Chưa có tab "THỐNG KÊ" để đối chiếu</h3>Nạp file Excel có chứa tab <b>THỐNG KÊ</b> cùng các tab xã (ví dụ file HỒ SƠ KỸ THUẬT-2026).<br><span class="sub">Tool sẽ tính lại từ dữ liệu gốc các tab xã và so từng số với tab THỐNG KÊ.</span></div></div>`;
+  const A = DATA.audit, tk = DATA.tk; if (!A) return '<div class="card"><div class="empty">Chưa có dữ liệu xã để tính lại. Vào tab Nguồn dữ liệu để chọn xã và cột.</div></div>';
+  const XM = ['Trước mốc – Tổng', 'Trước mốc – Đã thực hiện', 'Trước mốc – Chưa thực hiện', 'Từ mốc – Tổng', 'Từ mốc – Đã thực hiện', 'Từ mốc – Chưa thực hiện', 'Cộng – Đã thực hiện', 'Cộng – Chưa thực hiện'];
+  const CM = ['Đã thực hiện – trước mốc', 'Đã thực hiện – từ mốc', 'Đã thực hiện – tổng', 'Chưa thực hiện'];
+  const seedXaTot = tk.xaTotal || [];
+  const toolTot = [0, 1, 2, 3, 4, 5, 6, 7].map(i => Object.keys(A.xa).reduce((n, x) => n + A.xa[x][i], 0));
+  const R1 = [], R2 = [];
+  Object.keys(tk.xa).forEach(x => A.xa[x].forEach((v, i) => R1.push({ g: x, l: XM[i], s: tk.xa[x][i], t: v })));
+  toolTot.forEach((v, i) => R1.push({ g: 'TỔNG 4 xã', l: XM[i], s: seedXaTot[i], t: v }));
+  const rutSeed = tk.cb.find(c => norm(c.name) === 'RUT');
+  tk.cb.filter(c => norm(c.name) !== 'RUT').forEach(c => { const t = A.cb[c.name], ch = tk.chua.find(z => z.name === c.name), s = [c.pre, c.post, c.tot, ch ? ch.val : null];
+    t.forEach((v, i) => R2.push({ g: c.name, l: CM[i], s: s[i], t: v, miss: i === 3 && !ch })); });
+  if (rutSeed) [rutSeed.pre, rutSeed.post, rutSeed.tot].forEach((s, i) => R2.push({ g: 'RÚT (THỐNG KÊ nhập tay)', l: CM[i], s, t: A.rut[i] }));
+  [['(Chưa ghi cán bộ)', A.extraNoCb], ['(Cán bộ ngoài danh sách)', A.extraOther]].forEach(([g, v]) => v.forEach((x, i) => R2.push({ g, l: CM[i], s: null, t: x, miss: true, note: 'THỐNG KÊ không có dòng này' })));
+  const cbTotTool = [0, 1, 2].map(i => Object.keys(A.cb).reduce((n, k) => n + A.cb[k][i], 0) + (rutSeed ? A.rut[i] : 0));
+  if (tk.cbTotal) cbTotTool.forEach((v, i) => R2.push({ g: 'TỔNG theo cán bộ', l: CM[i], s: tk.cbTotal[i], t: v }));
+  const judge = r => r.s == null ? 'thieu' : r.s === r.t ? 'dung' : 'sai';
+  let nd = 0, nok = 0; [...R1, ...R2].forEach(r => { r.j = judge(r); if (r.j === 'sai') nd++; else if (r.j === 'dung') nok++; });
+  const only = !!S.onlyBad;
+  const mk = list => { let last = null, out = ''; list.forEach(r => { if (only && r.j !== 'sai') return;
+      if (r.g !== last) { out += `<tr class="grp2"><td colspan="5" class="l">${esc(r.g)}</td></tr>`; last = r.g; }
+      const diff = r.s == null ? '' : (r.t - r.s > 0 ? '+' : '') + (r.t - r.s);
+      out += `<tr class="${r.j}"><td class="l ind">${esc(r.l)}</td><td>${r.s == null ? '–' : r.s}</td><td><b>${r.t}</b></td><td>${diff}</td><td>${r.j === 'dung' ? '<span class="badge ok">✓ ĐÚNG</span>' : r.j === 'sai' ? '<span class="badge bad">✗ SAI</span>' : '<span class="badge n">THIẾU</span>'}</td></tr>`; });
+    return out || '<tr><td colspan="5" class="empty">Không có dòng sai</td></tr>'; };
+  const head = '<tr><th class="l">Chỉ tiêu</th><th>THỐNG KÊ đang ghi</th><th>Số đúng (tool tính lại)</th><th>Chênh lệch</th><th>Kết luận</th></tr>';
+  const sub = list => { const a = list.filter(r => r.j === 'sai').length, b = list.filter(r => r.j === 'dung').length; return `<span class="sub">· <b style="color:var(--ok)">${b} đúng</b> · <b style="color:var(--ton)">${a} sai</b></span>`; };
+  // đối chiếu nội bộ
+  const seedDaXa = seedXaTot[6], seedDaCb = tk.cbTotal ? tk.cbTotal[2] : null, gap = seedDaXa != null && seedDaCb != null ? seedDaXa - seedDaCb : null;
+  const chuaCbSum = tk.chuaTotal, chuaXa = seedXaTot[7];
+  const miss = Object.keys(A.cb).filter(n => !tk.chua.some(z => z.name === n));
+  let internal = '';
+  if (gap) { internal += `<li><b>Tổng "Đã thực hiện" theo xã (${seedDaXa}) ≠ theo cán bộ (${seedDaCb}): lệch ${gap}.</b> Hai số này phải bằng nhau. Nguyên nhân tool tìm thấy: ${A.noCb} hồ sơ đã trình chưa ghi cán bộ; ${A.otherCb} hồ sơ ghi cán bộ ngoài danh sách; ${A.variantDa} hồ sơ ghi tên cán bộ khác với tên chuẩn (thừa dấu cách / sai dấu) nên công thức không đếm.</li>`; }
+  if (A.blankChuaTotal) internal += `<li><b>${A.blankChuaTotal} hồ sơ không có ngày nhận (xem là RÚT) vẫn bị THỐNG KÊ tính vào "Chưa thực hiện" theo cán bộ</b>${Object.keys(A.blankChua).length ? ': ' + Object.keys(A.blankChua).map(n => esc(n) + ' ' + A.blankChua[n]).join(', ') : ''}. Theo quy ước, các hồ sơ này phải loại khỏi bảng tồn.</li>`;
+  if (chuaCbSum != null && chuaXa != null && chuaCbSum !== chuaXa) internal += `<li><b>Tổng "Chưa thực hiện" theo cán bộ (${chuaCbSum}) ≠ theo xã (${chuaXa}): lệch ${chuaXa - chuaCbSum}.</b> Bảng chỉ liệt kê ${tk.chua.length}/${A.chuaCbListed} cán bộ${miss.length ? ' (thiếu: ' + miss.map(esc).join(', ') + ')' : ''}; còn ${A.noCbChua} hồ sơ chưa ghi cán bộ và ${A.otherCbChua} hồ sơ ghi cán bộ ngoài danh sách.</li>`;
+  const sw = tk.chua.filter(z => A.cb[z.name] && z.val !== A.cb[z.name][3]).map(z => `${esc(z.name)}: ${z.val} → ${A.cb[z.name][3]}`);
+  // nguyên nhân & dòng cần sửa
+  const varLines = Object.keys(A.variants).filter(n => Object.keys(A.variants[n]).length).map(n => `<li><b>${esc(n)}</b>: ` + Object.keys(A.variants[n]).map(v => `${A.variants[n][v]} dòng ghi "<code>${esc(vis(v))}</code>"`).join('; ') + '</li>').join('');
+  const oth = Object.keys(A.otherNames).map(n => `${A.otherNames[n]} dòng "<code>${esc(n)}</code>"`).join('; ');
+  const rowsList = (list, f) => list.slice(0, 40).map(r => `<tr><td class="l src">${where(r)}</td><td class="l">${esc(r.ten)}</td><td class="l">${esc(f(r))}</td></tr>`).join('');
+  const far = A.far.map(r => `<tr><td class="l src">${where(r)}</td><td class="l">${esc(r.ten)}</td><td class="l">${vn(r.nhanAny) || '(không ngày)'}</td></tr>`).join('');
+  const verdict = nd || gap ? `<div class="warn bigwarn">⚠ THỐNG KÊ đang tổng hợp <b>SAI</b>: ${nd} số không khớp với dữ liệu gốc${gap ? ', và các tổng nội bộ không khớp nhau' : ''}. Xem chi tiết bên dưới.</div>`
+    : `<div class="okbar">✓ Các số trong THỐNG KÊ khớp với dữ liệu gốc.</div>`;
+  return verdict + `<div class="okbar2"><label><input type="checkbox" id="auditOnly" ${only ? 'checked' : ''}> Chỉ hiện các dòng SAI</label> <span class="sub">Tổng cộng: <b style="color:var(--ok)">${nok} số đúng</b> · <b style="color:var(--ton)">${nd} số sai</b> · cột "Số đúng" là số tool tính lại từ dữ liệu gốc (mốc ${esc(vn(A.cut))}: "trước" gồm cả ngày này, "từ" bắt đầu ${esc(vn(A.cut1))})</span></div>
+   <div class="card"><h2>1. Theo xã ${sub(R1)}</h2><table class="aud">${head}${mk(R1)}</table></div>
+   <div class="card"><h2>2. Theo cán bộ (gộp các xã) ${sub(R2)}</h2><table class="aud">${head}${mk(R2)}</table></div>
+   <div class="card"><h2>3. Kiểm tra nội bộ &amp; nguyên nhân</h2><div style="padding:6px 16px 14px"><ul class="notes">${internal || '<li>Các tổng nội bộ khớp nhau.</li>'}${sw.length ? `<li>Số "Chưa thực hiện" theo cán bộ sai: ${sw.join('; ')}</li>` : ''}
+   ${varLines ? `<li><b>Tên cán bộ ghi khác tên chuẩn</b> (công thức COUNTIFS chỉ đếm khi trùng từng ký tự; "␣" là dấu cách thừa):<ul>${varLines}</ul></li>` : ''}
+   ${oth ? `<li><b>Cán bộ ngoài danh sách cột:</b> ${oth}</li>` : ''}
+   ${A.badDate.length || A.oddDate.length ? `<li><b>${A.badDate.length + A.oddDate.length} dòng có ngày nhận gõ sai</b> – công thức có thể bỏ sót hoặc đếm lệch (Tổng và Đã thực hiện dùng điều kiện khác nhau). Cần sửa trong file gốc (bảng dưới).</li>` : ''}
+   ${A.far.length ? `<li><b>${A.far.length} hồ sơ nằm cách xa vùng dữ liệu chính</b> (có thể nằm ngoài phạm vi công thức, nên không được đếm).</li>` : ''}</ul></div></div>`
+   + (A.badDate.length || A.oddDate.length ? `<div class="card"><h2>Dòng có ngày nhận cần sửa</h2><table><tr><th class="l">Vị trí</th><th class="l">Tên</th><th class="l">Giá trị ở cột Ngày nhận</th></tr>${rowsList(A.badDate, r => '"' + r.nhanRaw + '" (không phải ngày hợp lệ)')}${rowsList(A.oddDate, r => 'số/chuỗi ' + vn(r.nhanAny) + ' (không phải ô ngày)')}</table></div>` : '')
+   + (A.far.length ? `<div class="card"><h2>Hồ sơ nằm xa vùng dữ liệu chính</h2><table><tr><th class="l">Vị trí</th><th class="l">Tên</th><th class="l">Ngày nhận</th></tr>${far}</table></div>` : '')
+   + FORMULA_NOTES;
+}
+const FORMULA_NOTES = `<div class="card"><h2>4. Lỗi công thức phát hiện khi đọc file HỒ SƠ KỸ THUẬT-2026 <span class="sub">(kiểm tra thủ công ngày 06/10/2026 – ghi chú cố định, không tự cập nhật)</span></h2><div style="padding:6px 16px 14px"><ul class="notes">
+ <li><b>THỐNG KÊ!O20</b> (Nguyễn Thị Thanh Hằng, từ mốc): lấy <code>'HỘI THỊNH'!AM10</code> và <code>'TAM DƯƠNG BẮC'!AM10</code> (hàng "chưa thực hiện") thay vì <code>AM6</code> (hàng "đã trình").</li>
+ <li><b>THỐNG KÊ!C23</b> (Đinh Việt Trung – chưa thực hiện) gõ cứng số 0; công thức đúng phải cộng <code>AE10</code> của 4 tab.</li>
+ <li>Bảng "Số lượng hồ sơ từng cán bộ chưa thực hiện" chỉ có 9 cán bộ, thiếu Phan Anh Tuấn, Nguyễn Văn Tuấn, Lê Thị Thu Hương, Nguyễn Thị Thanh Hằng; <code>C28</code> chỉ cộng các dòng liệt kê.</li>
+ <li><b>Cột W</b> ("Đã giải quyết", trước 28/2) dùng <code>"&lt;" DATE(2026,2,28)</code> và không có cận dưới, trong khi cột V (Tổng) dùng <code>&lt;=</code> và có cận dưới → ngày nhận gõ sai năm (0226, 0202, 0206) bị tính vào "Đã" nhưng không vào "Tổng"; hồ sơ ngày 28/2 (nếu có) sẽ bị tính là chưa thực hiện.</li>
+ <li><b>Phạm vi COUNTIFS "trôi"</b> (D5:D4923, D4924, D4925… mỗi hàng một khác) – tab TAM DƯƠNG BẮC có hồ sơ ở dòng 4928–4931 nằm ngoài phạm vi nên Tổng thiếu.</li>
+ <li><b>Cột AJ</b>: tiêu đề "NGUYỄN VĂN TUẤN" nhưng công thức ở các tab dùng tên "NGUYỄN TRUNG NGHĨA".</li>
+ <li><b>TAM DƯƠNG BẮC!AM10</b> lấy <code>COUNTIF(... "LÊ THỊ THU HƯƠNG")</code> trừ <code>COUNTIFS(... "NGUYỄN THỊ THANH HẰNG")</code> – lẫn hai người.</li>
+ <li><b>Cột AO10</b> ("TỔNG chưa thực hiện") cộng thiếu: HỘI THỊNH chỉ <code>AA10+AB10+AE10</code>; TAM DƯƠNG thiếu AM; HOÀNG AN và TAM DƯƠNG BẮC để trống.</li>
+ <li><b>TAM DƯƠNG!Z5:Z…</b> ("Đã có kết quả") đếm trên dữ liệu của tab <b>HỘI THỊNH</b>.</li>
+ <li>Ngày "đến" không thống nhất: 17/04/2027, 18/04/2027 (Hoàng An), 30/05/2027 (cột W) – hiện chưa ảnh hưởng số liệu nhưng dễ sai.</li>
+ <li><b>THỐNG KÊ!N21:P21</b> (RÚT) và các bảng "NGUỒN 16/17…" là số nhập tay, không liên kết dữ liệu.</li></ul></div></div>`;
+function buildCount(sh) { return Math.max(0, sh.rows.length - sh.cfg.he - 1); }
+
+function intro() {
+  return `<div class="card drop"><div class="empty"><h3>Nạp file hồ sơ để bắt đầu</h3>
+   <p>Bấm <b>"Nạp file Excel"</b> hoặc kéo thả một hay nhiều file vào đây.<br>Hỗ trợ: <b>.xlsx, .xlsm, .xls, .ods, .csv, .tsv</b> và file .xls dạng HTML.</p>
+   <button class="btn big" data-act="pick">Nạp file Excel</button>
+   <p class="sub">Mỗi sheet (hoặc file) ứng với một xã. Tool tự nhận diện cột Tên, Mã, Tờ, Thửa, SĐT, Cán bộ, Ngày nhận, Đã trình; nếu nhận sai bạn chỉnh trong tab "Nguồn dữ liệu". Dữ liệu chỉ nằm trên máy của bạn.</p></div></div>`;
+}
+function render() {
+  const P = span(S.ref, S.unit); $('plabel').textContent = P.label;
+  root.querySelectorAll('#unitSeg button').forEach(b => b.classList.toggle('on', b.dataset.u === S.unit));
+  root.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.t === S.tab));
+  const X = xas(); $('xaSeg').innerHTML = ['ALL', ...X].map(x => `<button data-x="${esc(x)}" class="${S.xa === x ? 'on' : ''}">${x === 'ALL' ? 'Tất cả xã' : esc(x)}</button>`).join('');
+  $('permBar').innerHTML = ST.needPerm ? `<div class="warn">Trình duyệt cần bạn cho phép đọc lại file đã nạp để tự cập nhật khi file thay đổi. <button class="mini" data-act="reconnect">Cho phép</button></div>` : '';
+  if (!DATA) return;
+  $('warns').innerHTML = DATA.warnings.map(w => `<div class="warn">${esc(w)}</div>`).join('');
+  const hasData = DATA.records.length > 0, plain = S.tab === 'src' || S.tab === 'audit';
+  $('kpis').style.display = hasData && !plain ? '' : 'none';
+  $('bar').style.display = hasData && !plain ? '' : 'none';
+  if (hasData) renderKpis(P);
+  let v;
+  if (S.tab === 'src') v = driveCard() + (viewSrc() || intro());
+  else if (S.tab === 'audit') v = viewAudit();
+  else if (!hasData) v = ST.sources.length ? '<div class="card"><div class="empty">Chưa có hồ sơ nào được đưa vào thống kê.<br>Vào tab <b>Nguồn dữ liệu</b> để chọn xã và cột cho từng sheet.</div></div>' : intro();
+  else v = { tong: viewTong, time: viewTime, ton: viewTon, dup: viewDup }[S.tab](P);
+  const keep = root.activeElement && root.activeElement.id === 'q', sc = root.host.scrollTop;
+  $('view').innerHTML = v;
+  const q = $('q'); if (q) { q.oninput = () => { S.q = q.value; const pos = q.selectionStart; render(); const n = $('q'); n.focus(); n.setSelectionRange(pos, pos); }; if (keep) q.focus(); }
+  root.querySelectorAll('#metSeg button').forEach(b => b.onclick = () => { S.metric = b.dataset.m; render(); });
+  const ao = $('auditOnly'); if (ao) ao.onchange = () => { S.onlyBad = ao.checked; render(); };
+  const ot = $('optTrinh'); if (ot) ot.onchange = () => { ST.opts.trinhByDate = ot.checked; ST.sources.forEach(saveCfg); rebuild(); };
+  root.host.scrollTop = sc;
+}
+function setLive(state, txt) {
+  $('dot').className = 'dot' + (state === 'ok' ? '' : state === 'err' ? ' err' : ' load');
+  $('liveTxt').textContent = txt || (ST.sources.length ? 'Đã nạp ' + ST.sources.length + ' file · cập nhật ' + new Date().toLocaleTimeString('vi-VN') + (ST.sources.some(s => s.watch) ? ' · tự theo dõi file' : '') + (GD.on ? ' · Drive tự động' : '') : 'Chưa nạp file');
+}
+
+// ---------- xuất CSV ----------
+async function csvDownload(name, rows) {
+  const t = '\uFEFF' + rows.map(r => r.map(v => { v = String(v == null ? '' : v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(',')).join('\r\n');
+  if (window.claude && claude.use) {
+    try { const dl = await claude.use('downloads'); if (dl) { await dl.save({ filename: name, data: t }); return; } }
+    catch (e) { if (e && e.code !== 'unavailable') return; }
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([t], { type: 'text/csv;charset=utf-8' })); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function exportTon() {
+  csvDownload('ho-so-ton.csv', [['Xã', 'Địa bàn', 'Mã hồ sơ', 'Tên', 'Tờ', 'Thửa', 'SĐT', 'Cán bộ', 'Loại thủ tục', 'Ngày nhận', 'Số ngày tồn', 'Nguồn']].concat(tonList().map(({ r, days }) => [r.xa, r.dia, r.ma, r.ten, r.to, r.thua, r.sdt, cbName(r), r.loai, vn(r.nhan), days == null ? '' : days, r.src + ' · dòng ' + r.row])));
+}
+function exportNd() {
+  csvDownload('ho-so-khong-co-ngay-nhan-rut.csv', [['Xã', 'Mã hồ sơ', 'Tên', 'Tờ', 'Thửa', 'SĐT', 'Cán bộ', 'Nguồn', 'Hồ sơ trùng (nếu có)']].concat(DATA.noDate.map(x => [x.r.xa, x.r.ma, x.r.ten, x.r.to, x.r.thua, x.r.sdt, cbName(x.r), x.r.src + ' · dòng ' + x.r.row, x.m ? x.m.src + ' · dòng ' + x.m.row : ''])));
+}
+function exportCb() {
+  const P = span(S.ref, S.unit), X = xas(), list = recs().filter(inXa), cbs = [...new Set(list.map(cbName))].sort((a, b) => a.localeCompare(b, 'vi'));
+  csvDownload('theo-can-bo-' + P.s + '.csv', [['Cán bộ', 'Đã trình trong kỳ', 'Tồn cuối kỳ'].concat(X.map(x => 'Tồn ' + x))].concat(cbs.map(c => { const l = list.filter(r => cbName(r) === c), s = pstat(l, P.s, P.e); return [c, s.b, s.c].concat(X.map(x => pstat(l.filter(r => r.xa === x), P.s, P.e).c)); })));
+}
+
+// ---------- sự kiện ----------
+function srcOf(el) { return ST.sources[+el.dataset.si]; }
+root.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act],[data-u],[data-x],[data-t]'); if (!t) return;
+  if (t.dataset.u) { S.unit = t.dataset.u; return render(); }
+  if (t.dataset.x) { S.xa = t.dataset.x; return render(); }
+  if (t.dataset.t) { S.tab = t.dataset.t; return render(); }
+  const a = t.dataset.act;
+  if (a === 'pick') pickFiles();
+  else if (a === 'gdhelp') gdHelp();
+  else if (a === 'gdstop') { GD.on = false; gdSave(); GD.status = 'Đã tắt tự động.'; render(); }
+  else if (a === 'gdstart') {
+    GD.url = $('gdUrl').value.trim(); GD.key = $('gdKey').value; GD.link = $('gdLink').value.trim(); GD.id = gdId(GD.link); GD.every = Math.min(60, Math.max(1, +$('gdEvery').value || 2));
+    if (!/^https:\/\/script\.google(usercontent)?\.com\//.test(GD.url)) { GD.status = 'Đường dẫn Web App phải bắt đầu bằng https://script.google.com/…'; return render(); }
+    if (!GD.id) { GD.status = 'Không nhận ra ID file từ link đã nhập.'; return render(); }
+    GD.on = true; GD.mod = 0; gdSave(); syncDrive(true);
+  }
+  else if (a === 'csvNd') exportNd(); else if (a === 'csvTon') exportTon(); else if (a === 'csvCb') exportCb(); else if (a === 'csvDia') exportDia();
+  else if (a === 'map') { S.open[t.dataset.k] = !S.open[t.dataset.k]; render(); }
+  else if (a === 'reconnect') reconnect();
+  else if (a === 'remove') { const s = srcOf(t); if (await uiConfirm('Gỡ file "' + s.name + '" khỏi công cụ? (file gốc không bị xóa)')) { ST.sources = ST.sources.filter(x => x !== s); DB.del(s.name); rebuild(); setLive('ok'); } }
+  else if (a === 'reload') { const s = srcOf(t); if (s.handle) s.handle.getFile().then(f => loadFile(f, s.handle)).catch(() => uiAlert('Không đọc được file. Hãy nạp lại file bằng nút "Nạp file Excel".')); else uiAlert('File này nạp thủ công. Hãy bấm "Nạp file Excel" và chọn lại file đã sửa.'); }
+  else if (a === 'redetect') { const s = srcOf(t), sh = s.sheets[+t.dataset.hi], auto = detectSheet(sh.rows); sh.cfg = { ...auto, xa: sh.cfg.xa, include: sh.cfg.include }; saveCfg(s); persist(s); rebuild(); }
+});
+root.addEventListener('change', async e => {
+  const t = e.target; if (t.id === 'fileInput') { [...t.files].reduce((p, f) => p.then(() => loadFile(f, null)), Promise.resolve()); t.value = ''; return; }
+  const a = t.dataset && t.dataset.act; if (!a || !['inc', 'xa', 'he', 'col'].includes(a)) return;
+  const s = srcOf(t), sh = s.sheets[+t.dataset.hi], c = sh.cfg;
+  if (a === 'inc') c.include = t.checked;
+  else if (a === 'xa') { let v = t.value; if (v === '__NEW__') { v = ((await uiPrompt('Nhập tên xã:')) || '').trim(); if (!v) return render(); } c.xa = v; }
+  else if (a === 'he') { c.he = Math.max(0, (+t.value || 1) - 1); const m = matchFields(sh.rows, c.he, c.ncol || 30); c.map = { ...m.map }; }
+  else if (a === 'col') { const f = FIELD_DEFS.find(x => x.k === t.dataset.f); if (f.multi) c.map[f.k] = [...t.selectedOptions].map(o => +o.value); else if (t.value === '') delete c.map[f.k]; else c.map[f.k] = +t.value; c.ok = true; }
+  if (c.xa && c.map.ten != null && a !== 'inc' && !c.include) c.include = true;
+  saveCfg(s); persist(s); rebuild();
+});
+$('refresh').onclick = () => { checkWatch(); rebuild(); };
+$('pickBtn').onclick = pickFiles;
+async function clearAll() {
+  if (!ST.sources.length) { uiAlert('Chưa có file nào được nạp.'); return; }
+  if (!(await uiConfirm('Xóa toàn bộ ' + ST.sources.length + ' file đã nạp và dữ liệu tổng hợp?\n(File Excel gốc trên máy không bị xóa. Cấu hình cột đã chọn vẫn được nhớ.)'))) return;
+  for (const s of ST.sources) await DB.del(s.name);
+  ST.sources = []; ST.errors = []; S.q = ''; S.open = {}; GD.mod = 0;
+  rebuild(); setLive('ok');
+}
+$('clearBtn').onclick = clearAll;
+$('prev').onclick = () => { S.ref = shift(S.ref, S.unit, -1); render(); };
+$('next').onclick = () => { S.ref = shift(S.ref, S.unit, 1); render(); };
+$('today').onclick = () => { S.ref = new Date(); render(); };
+// kéo thả
+['dragenter', 'dragover'].forEach(ev => root.addEventListener(ev, e => { e.preventDefault(); APP.classList.add('dragging'); }));
+['dragleave', 'drop'].forEach(ev => root.addEventListener(ev, e => { e.preventDefault(); if (ev === 'drop' || e.target === document.documentElement || !e.relatedTarget) APP.classList.remove('dragging'); }));
+root.addEventListener('drop', async e => {
+  const items = [...(e.dataTransfer.items || [])].filter(i => i.kind === 'file'), files = [...(e.dataTransfer.files || [])];
+  const hs = []; for (const it of items) { try { hs.push(it.getAsFileSystemHandle ? await it.getAsFileSystemHandle() : null); } catch (x) { hs.push(null); } }
+  for (let i = 0; i < files.length; i++) { const h = hs[i] && hs[i].kind === 'file' ? hs[i] : null; await loadFile(h ? await h.getFile() : files[i], h); }
+});
+setInterval(() => { if (!document.hidden) checkWatch(); }, 4000);
+render(); setLive('ok'); restore().then(() => { setLive('ok'); if (GD.on) syncDrive(true); });
+
+
+
+return {show:function(){}};
+}
+
+/* ---------- 2. Tra cứu pháp luật đất đai ---------- */
+function mountLaw(root){
+const BASE=[
+ {
+  "cap": "Trung ương",
+  "so": "31/2024/QH15",
+  "ten": "Luật Đất đai 2024",
+  "ban": "18/01/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (đã được sửa đổi bởi nhiều luật khác 2024-2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=31/2024/QH15",
+  "gc": "Dự án Luật Đất đai (sửa đổi) dự kiến trình Quốc hội kỳ họp tháng 10/2026, chưa phải luật có hiệu lực"
+ },
+ {
+  "cap": "Trung ương",
+  "so": "254/2025/QH15",
+  "ten": "Nghị quyết tháo gỡ khó khăn, vướng mắc trong tổ chức thi hành Luật Đất đai",
+  "ban": "11/12/2025",
+  "hl": "01/01/2026",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=254/2025/QH15",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "71/2024/NĐ-CP",
+  "ten": "Quy định về giá đất",
+  "ban": "27/06/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi NĐ 151/2025, 226/2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=71/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "88/2024/NĐ-CP",
+  "ten": "Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất",
+  "ban": "",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (kiểm tra sửa đổi bởi NĐ 151/2025, 226/2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=88/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "101/2024/NĐ-CP",
+  "ten": "Điều tra cơ bản đất đai; đăng ký, cấp GCN; Hệ thống thông tin đất đai",
+  "ban": "29/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi NĐ 151/2025, 226/2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=101/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "102/2024/NĐ-CP",
+  "ten": "Quy định chi tiết thi hành một số điều của Luật Đất đai",
+  "ban": "30/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi NĐ 151/2025, 226/2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=102/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "103/2024/NĐ-CP",
+  "ten": "Tiền sử dụng đất, tiền thuê đất",
+  "ban": "30/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi NĐ 291/2025, 50/2026)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=103/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "104/2024/NĐ-CP",
+  "ten": "Quỹ phát triển đất",
+  "ban": "31/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=104/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "112/2024/NĐ-CP",
+  "ten": "Hướng dẫn về đất trồng lúa",
+  "ban": "",
+  "hl": "",
+  "tt": "Còn hiệu lực (cần kiểm tra)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=112/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "115/2024/NĐ-CP",
+  "ten": "Chi tiết Luật Đấu thầu về lựa chọn nhà đầu tư dự án có sử dụng đất",
+  "ban": "16/09/2024",
+  "hl": "16/09/2024",
+  "tt": "Còn hiệu lực (cần kiểm tra)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=115/2024/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "123/2024/NĐ-CP",
+  "ten": "Xử phạt vi phạm hành chính trong lĩnh vực đất đai",
+  "ban": "04/10/2024",
+  "hl": "04/10/2024",
+  "tt": "Còn hiệu lực, đã sửa đổi bởi NĐ 281/2026/NĐ-CP",
+  "pdf": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/7/73-vbhn-bnnmt.signed.pdf",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=123/2024/N%C4%90-CP",
+  "gc": "Bản PDF là Văn bản hợp nhất 73/2026/VBHN-BNNMT"
+ },
+ {
+  "cap": "Trung ương",
+  "so": "151/2025/NĐ-CP",
+  "ten": "Phân định thẩm quyền chính quyền địa phương 2 cấp, phân quyền, phân cấp trong lĩnh vực đất đai",
+  "ban": "12/06/2025",
+  "hl": "01/07/2025",
+  "tt": "Còn hiệu lực (sửa đổi bởi NĐ 226/2025)",
+  "pdf": "https://www.mae.gov.vn/noidung/Lists/VBQPPL/Attachments/632/50-VBHN-BNNMT.pdf",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=151/2025/N%C4%90-CP",
+  "gc": "Bản PDF là Văn bản hợp nhất 50/VBHN-BNNMT"
+ },
+ {
+  "cap": "Trung ương",
+  "so": "226/2025/NĐ-CP",
+  "ten": "Sửa đổi, bổ sung các nghị định quy định chi tiết thi hành Luật Đất đai",
+  "ban": "15/08/2025",
+  "hl": "15/08/2025",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=226/2025/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "291/2025/NĐ-CP",
+  "ten": "Sửa đổi cách tính, miễn giảm, thu tiền sử dụng đất khi cấp Giấy chứng nhận",
+  "ban": "",
+  "hl": "06/11/2025",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=291/2025/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "87/2025/NĐ-CP",
+  "ten": "Giảm tiền thuê đất năm 2024",
+  "ban": "",
+  "hl": "",
+  "tt": "Cần kiểm tra hiệu lực (văn bản có thời hạn áp dụng)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=87/2025/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "49/2026/NĐ-CP",
+  "ten": "Chi tiết, hướng dẫn một số điều của Nghị quyết 254/2025/QH15",
+  "ban": "31/01/2026",
+  "hl": "31/01/2026",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=49/2026/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "50/2026/NĐ-CP",
+  "ten": "Chi tiết Nghị quyết 254/2025/QH15 về tiền sử dụng đất, tiền thuê đất",
+  "ban": "31/01/2026",
+  "hl": "",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=50/2026/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "281/2026/NĐ-CP",
+  "ten": "Sửa đổi, bổ sung Nghị định 123/2024/NĐ-CP về xử phạt vi phạm hành chính đất đai",
+  "ban": "13/07/2026",
+  "hl": "31/08/2026",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=281/2026/N%C4%90-CP",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "08/2024/TT-BTNMT",
+  "ten": "Thống kê, kiểm kê đất đai và lập bản đồ hiện trạng sử dụng đất",
+  "ban": "31/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi TT 23/2025/TT-BNNMT)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=08/2024/TT-BTNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "09/2024/TT-BTNMT",
+  "ten": "CSDL quốc gia về đất đai và yêu cầu kỹ thuật phần mềm",
+  "ban": "31/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi 2025)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=09/2024/TT-BTNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "10/2024/TT-BTNMT",
+  "ten": "Hồ sơ địa chính, Giấy chứng nhận quyền sử dụng đất",
+  "ban": "31/07/2024",
+  "hl": "01/08/2024",
+  "tt": "Còn hiệu lực (sửa đổi bởi TT 23/2025/TT-BNNMT)",
+  "pdf": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2025/8/32-vbhn-bnnmt.pdf",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=10/2024/TT-BTNMT",
+  "gc": "Bản PDF là Văn bản hợp nhất 32/VBHN-BNNMT"
+ },
+ {
+  "cap": "Trung ương",
+  "so": "11/2024/TT-BTNMT",
+  "ten": "Kỹ thuật điều tra, đánh giá đất đai; bảo vệ, cải tạo, phục hồi đất",
+  "ban": "31/07/2024",
+  "hl": "",
+  "tt": "Còn hiệu lực (cần kiểm tra)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=11/2024/TT-BTNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "29/2024/TT-BTNMT",
+  "ten": "Kỹ thuật lập, điều chỉnh quy hoạch, kế hoạch sử dụng đất",
+  "ban": "12/12/2024",
+  "hl": "",
+  "tt": "Còn hiệu lực (sửa đổi bởi TT 23/2025/TT-BNNMT)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=29/2024/TT-BTNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "48/2024/TT-BTNMT",
+  "ten": "Định mức KT-KT thống kê, kiểm kê đất đai, bản đồ hiện trạng, CSDL quốc gia",
+  "ban": "31/12/2024",
+  "hl": "15/02/2025",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=48/2024/TT-BTNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "23/2025/TT-BNNMT",
+  "ten": "Phân cấp, phân định thẩm quyền quản lý nhà nước trong lĩnh vực đất đai",
+  "ban": "20/06/2025",
+  "hl": "01/07/2025",
+  "tt": "Còn hiệu lực",
+  "pdf": "https://mae.gov.vn/Pages/chitietvanban.aspx?ItemID=590",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=23/2025/TT-BNNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "19/2026/TT-BNNMT",
+  "ten": "Kỹ thuật lồng ghép đo đạc địa chính, đăng ký đất đai, hồ sơ địa chính, CSDL đất đai",
+  "ban": "",
+  "hl": "",
+  "tt": "Còn hiệu lực (cần kiểm tra ngày)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=19/2026/TT-BNNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "2304/QĐ-BNNMT",
+  "ten": "Công bố thủ tục hành chính lĩnh vực đất đai (theo NĐ 151/2025)",
+  "ban": "23/06/2025",
+  "hl": "01/07/2025",
+  "tt": "Cần kiểm tra: có thể đã được thay bằng danh mục TTHC năm 2026",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=2304/Q%C4%90-BNNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Trung ương",
+  "so": "441/QĐ-BNNMT",
+  "ten": "Công bố hướng dẫn khai thác dữ liệu Giấy chứng nhận trong CSDL quốc gia",
+  "ban": "",
+  "hl": "2026",
+  "tt": "Còn hiệu lực",
+  "pdf": "https://datafiles.chinhphu.vn/cpp/files/vbpq/2026/01/441-bnnmt.pdf",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=441/Q%C4%90-BNNMT",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "85/2025/NQ-HĐND",
+  "ten": "Bảng giá đất lần đầu áp dụng từ 01/01/2026 (toàn tỉnh Phú Thọ sau sáp nhập)",
+  "ban": "30/12/2025",
+  "hl": "01/01/2026",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=85/2025/NQ-H%C4%90ND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "116/2025/QĐ-UBND",
+  "ten": "Quy định cụ thể một số điều Luật Đất đai và nghị định (hạn mức, tách thửa, hợp thửa...)",
+  "ban": "",
+  "hl": "15/12/2025",
+  "tt": "Còn hiệu lực (cần đối chiếu sửa đổi sau đó)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=116/2025/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "84/2025/QĐ-UBND",
+  "ten": "Bồi thường, hỗ trợ, tái định cư khi Nhà nước thu hồi đất",
+  "ban": "03/11/2025",
+  "hl": "15/11/2025",
+  "tt": "Còn hiệu lực; thay QĐ 15/2024 Phú Thọ và QĐ 10/2025 Vĩnh Phúc",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=84/2025/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "14/2026/QĐ-UBND",
+  "ten": "Phân cấp một số nhiệm vụ, quyền hạn của UBND tỉnh trong lĩnh vực đất đai",
+  "ban": "04/05/2026",
+  "hl": "",
+  "tt": "Còn hiệu lực (cần kiểm tra ngày hiệu lực)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=14/2026/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "33/2026/QĐ-UBND",
+  "ten": "Trình tự, thủ tục hành chính về đất đai trên địa bàn tỉnh",
+  "ban": "29/06/2026",
+  "hl": "",
+  "tt": "Còn hiệu lực (cần kiểm tra ngày hiệu lực)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=33/2026/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "36/2026/QĐ-UBND",
+  "ten": "Hệ số điều chỉnh giá đất năm 2026",
+  "ban": "30/06/2026",
+  "hl": "",
+  "tt": "Còn hiệu lực",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=36/2026/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "135/2025/QĐ-UBND",
+  "ten": "Một số nội dung hoạt động đo đạc và bản đồ; thay QĐ 07/2024 Vĩnh Phúc",
+  "ban": "22/12/2025",
+  "hl": "01/01/2026",
+  "tt": "Còn hiệu lực (số QĐ cần đối chiếu bản chính)",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=135/2025/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Phú Thọ (mới)",
+  "so": "06/2025/QĐ-UBND",
+  "ten": "Định mức KT-KT thống kê, kiểm kê đất đai, bản đồ hiện trạng",
+  "ban": "05/03/2025",
+  "hl": "05/03/2025",
+  "tt": "Cần kiểm tra còn hiệu lực sau sáp nhập",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=06/2025/Q%C4%90-UBND",
+  "gc": ""
+ },
+ {
+  "cap": "Vĩnh Phúc (cũ)",
+  "so": "10/2025/QĐ-UBND (Vĩnh Phúc)",
+  "ten": "Bồi thường, hỗ trợ, tái định cư khi thu hồi đất",
+  "ban": "14/04/2025",
+  "hl": "",
+  "tt": "Hết hiệu lực, thay bởi QĐ 84/2025/QĐ-UBND Phú Thọ",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=10/2025/Q%C4%90-UBND%20%28V%C4%A9nh%20Ph%C3%BAc%29",
+  "gc": ""
+ },
+ {
+  "cap": "Vĩnh Phúc (cũ)",
+  "so": "07/2024/QĐ-UBND (Vĩnh Phúc)",
+  "ten": "Quản lý hoạt động đo đạc và bản đồ chuyên ngành",
+  "ban": "16/02/2024",
+  "hl": "",
+  "tt": "Hết hiệu lực từ 01/01/2026",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=07/2024/Q%C4%90-UBND%20%28V%C4%A9nh%20Ph%C3%BAc%29",
+  "gc": ""
+ },
+ {
+  "cap": "Vĩnh Phúc (cũ)",
+  "so": "11/2025/QĐ-UBND (Vĩnh Phúc)",
+  "ten": "Trung tâm Phát triển quỹ đất tỉnh Vĩnh Phúc",
+  "ban": "14/04/2025",
+  "hl": "",
+  "tt": "Cần kiểm tra: tổ chức bộ máy sau sáp nhập",
+  "pdf": "",
+  "tra": "https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=11/2025/Q%C4%90-UBND%20%28V%C4%A9nh%20Ph%C3%BAc%29",
+  "gc": ""
+ }
+];
+let DATA=BASE.slice(),dbRef=null,sample=null,downloads=null;
+let cap="Tất cả",sel=0,q="",view="doc",advice=null,uploads=[];
+const caps=["Tất cả","Trung ương","Phú Thọ (mới)","Vĩnh Phúc (cũ)"];
+const $=id=>root.getElementById(id);
+const norm=s=>(s||"").toLowerCase();
+const tra=so=>"https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword="+encodeURIComponent(so||"");
+const stClass=t=>{t=norm(t);return t.startsWith("hết")?"st-bad":(t.includes("kiểm tra")?"st-warn":"st-ok")};
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function visible(){return DATA.map((d,i)=>[d,i]).filter(([d])=>(cap==="Tất cả"||d.cap===cap)&&(!q||norm(d.so+" "+d.ten+" "+d.tt).includes(q)))}
+function renderChips(){const c=$("chips");c.textContent="";caps.forEach(k=>{const b=el("button","chip",k);b.type="button";b.setAttribute("aria-pressed",k===cap);b.onclick=()=>{cap=k;renderChips();renderList()};c.appendChild(b)})}
+function renderList(){const l=$("list");l.textContent="";const v=visible();if(!v.length){l.appendChild(el("p","note","Không có văn bản khớp. Thử từ khóa khác.")).style.padding="12px";return}
+v.forEach(([d,i])=>{const b=el("button","row");b.type="button";b.setAttribute("role","listitem");if(i===sel&&view==="doc")b.setAttribute("aria-current","true");
+b.append(el("span","so",d.so),el("span","ten",d.ten),el("span","tag",d.cap+(d.mine?" · BỔ SUNG":"")));
+b.onclick=()=>{sel=i;view="doc";render()};l.appendChild(b)})}
+function docView(b){const d=DATA[sel];if(!d)return;
+b.appendChild(el("h2",null,d.so+" · "+d.ten));
+const dl=el("dl");[["Cấp",d.cap],["Ngày ban hành",d.ban||"Chưa đối chiếu"],["Hiệu lực từ",d.hl||"Chưa đối chiếu"],["Tình trạng",d.tt]].forEach(([k,v],n)=>{const dd=el("dd",n===3?stClass(v):"",v);dl.append(el("dt",null,k),dd)});b.appendChild(dl);
+if(d.gc)b.appendChild(el("p","note",d.gc));
+if(d.nd)b.appendChild(el("div","nd",d.nd));
+const bt=el("div","btns");
+if(d.pdf){const a=el("a","btn","Mở bản PDF");a.href=d.pdf;a.target="_blank";a.rel="noopener";bt.appendChild(a)}
+const s=el("a","btn"+(d.pdf?" alt":""),"Tra toàn văn trên Thư viện Pháp luật");s.href=d.tra||tra(d.so);s.target="_blank";s.rel="noopener";bt.appendChild(s);b.appendChild(bt);
+if(d.mine&&dbRef){const x=el("button","chip","Xóa văn bản bổ sung này");x.type="button";x.onclick=()=>{if(x.dataset.ok){dbRef.collection("added_docs").doc(d.id).delete()}else{x.dataset.ok=1;x.textContent="Bấm lần nữa để xác nhận xóa"}};b.appendChild(x)}
+b.appendChild(el("p","note",d.pdf?"Trang này không nhúng được PDF của website khác, nên bản PDF mở ở tab mới.":"Chưa có đường dẫn PDF chính thống đã kiểm tra cho văn bản này, nên dùng liên kết tra cứu."))}
+function advView(b){
+if(advice==="loading"){b.appendChild(el("p","note","Đang phân tích tình huống…"));return}
+if(!advice){b.appendChild(el("p","note","Chưa có kết quả. Nhập câu hỏi ở trên cùng, tải tài liệu nếu có, rồi bấm Tư vấn."));return}
+if(advice.error){b.appendChild(el("p","st-bad",advice.error));return}
+b.appendChild(el("h2",null,"Kết quả tư vấn"));
+if(advice.cau_hoi)b.appendChild(el("p","note","Câu hỏi: "+advice.cau_hoi));
+if(advice.tom_tat)b.appendChild(el("p",null,advice.tom_tat));
+if(advice.huong_xu_ly){b.appendChild(el("h3",null,"Phương hướng xử lý"));b.appendChild(el("p",null,advice.huong_xu_ly))}
+if((advice.buoc||[]).length){b.appendChild(el("h3",null,"Trình tự thực hiện"));advice.buoc.forEach((s,i)=>{const c=el("div","step");c.appendChild(el("b",null,"Bước "+(i+1)+". "+(s.viec||"")));[["Căn cứ",s.can_cu],["Hồ sơ",s.ho_so],["Thời hạn",s.thoi_han],["Cơ quan",s.co_quan]].forEach(([k,v])=>{if(v)c.appendChild(el("span","k",k+": "+v))});b.appendChild(c)})}
+if((advice.can_cu||[]).length){b.appendChild(el("h3",null,"Văn bản căn cứ"));advice.can_cu.forEach(x=>{b.appendChild(el("p","note",(x.so||"")+(x.dieu?" · "+x.dieu:"")+(x.noi_dung?" · "+x.noi_dung:"")))})}
+if(advice.luu_y){b.appendChild(el("h3",null,"Lưu ý"));b.appendChild(el("p","note",advice.luu_y))}
+b.appendChild(el("p","note","Kết quả này là bản nháp tham khảo từ danh mục trong trang và tài liệu bạn tải lên. Cần đối chiếu toàn văn trước khi áp dụng."))}
+function render(){renderList();$("tabdoc").setAttribute("aria-pressed",view==="doc");$("tabadv").setAttribute("aria-pressed",view==="adv");
+const b=$("body");b.textContent="";(view==="doc"?docView:advView)(b);
+const ok=!!(advice&&advice!=="loading"&&!advice.error)&&view==="adv";$("xw").disabled=!ok;$("xx").disabled=!ok}
+$("tabdoc").onclick=()=>{view="doc";render()};$("tabadv").onclick=()=>{view="adv";render()};
+$("q").oninput=e=>{q=norm(e.target.value.trim());renderList()};
+
+/* tải tài liệu */
+const MAXC=60000;
+function fileText(f){return new Promise((res,rej)=>{const n=norm(f.name);
+if(n.endsWith(".docx")){const r=new FileReader();r.onload=async()=>{try{const o=await mammoth.extractRawText({arrayBuffer:r.result});res(o.value)}catch(e){rej(e)}};r.onerror=rej;r.readAsArrayBuffer(f)}
+else if(/\.(txt|md|csv|json|html?|xml)$/.test(n)){const r=new FileReader();r.onload=()=>res(String(r.result));r.onerror=rej;r.readAsText(f)}
+else rej(new Error("type"))})}
+function renderFiles(){const w=$("files");w.textContent="";uploads.forEach((u,i)=>{const c=el("button","chip",u.name+" ✕");c.type="button";c.title="Bỏ tài liệu này";c.onclick=()=>{uploads.splice(i,1);renderFiles()};w.appendChild(c)})}
+$("upbtn").onclick=()=>$("up").click();
+$("up").onchange=async e=>{const note=$("upnote");note.textContent="";const lim=sample?await sample.limits().catch(()=>null):null;
+for(const f of e.target.files){
+if(f.type.startsWith("image/")){if(lim&&lim.images){uploads.push({name:f.name,img:f})}else note.textContent="Chưa gửi được ảnh: "+f.name;continue}
+try{const t=await fileText(f);uploads.push({name:f.name,text:t.slice(0,MAXC)});if(t.length>MAXC)note.textContent="Một số tài liệu dài, chỉ dùng "+MAXC.toLocaleString("vi-VN")+" ký tự đầu."}
+catch(x){note.textContent="Chưa đọc được "+f.name+". Dùng .docx, .txt, .md, .csv hoặc ảnh. Với PDF, gửi vào khung chat."}}
+e.target.value="";renderFiles()};
+
+/* tư vấn */
+$("go").onclick=async()=>{const t=$("sit").value.trim();if(!t||!sample)return;
+view="adv";advice="loading";render();$("go").disabled=true;
+try{const cat=DATA.map(d=>d.cap+" | "+d.so+" | "+d.ten+" | "+d.tt+(d.nd?"\nTOÀN VĂN/TRÍCH: "+d.nd.slice(0,6000):"")).join("\n");
+const docs=uploads.filter(u=>u.text).map(u=>"[Tài liệu: "+u.name+"]\n"+u.text).join("\n\n");
+const imgs=uploads.filter(u=>u.img).map(u=>u.img);
+const prompt="Bạn hỗ trợ cán bộ văn phòng đăng ký đất đai tại tỉnh Phú Thọ. Dựa CHỈ vào danh mục văn bản, phần toàn văn bổ sung và tài liệu người dùng cung cấp bên dưới. Chỉ ghi số điều, khoản khi chúng xuất hiện trong phần toàn văn được cung cấp; nếu không có thì ghi 'cần tra toàn văn' ở trường dieu. Không bịa. Trả về DUY NHẤT một JSON hợp lệ dạng {\"tom_tat\":string,\"huong_xu_ly\":string,\"buoc\":[{\"viec\":string,\"can_cu\":string,\"ho_so\":string,\"thoi_han\":string,\"co_quan\":string}],\"can_cu\":[{\"so\":string,\"dieu\":string,\"noi_dung\":string}],\"luu_y\":string}. Tiếng Việt, ngắn gọn.\n\nDANH MỤC:\n"+cat+"\n\nTÀI LIỆU NGƯỜI DÙNG:\n"+(docs||"(không có)")+"\n\nCÂU HỎI:\n"+t;
+const r=await sample.json(prompt,{cache:false,images:imgs.length?imgs:undefined});
+r.cau_hoi=t;advice=r}
+catch(e){advice={error:e&&e.code==="not_granted"?"Bạn chưa cấp quyền cho trang hỏi Claude.":"Chưa nhận được kết quả. Thử lại sau."}}
+$("go").disabled=false;render()};
+
+/* xuất file */
+const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+function para(t,o){o=o||{};return '<w:p><w:pPr>'+(o.h?'<w:spacing w:before="200" w:after="80"/>':'<w:spacing w:after="80"/>')+'</w:pPr><w:r><w:rPr>'+(o.b||o.h?'<w:b/>':'')+(o.h?'<w:sz w:val="26"/>':'<w:sz w:val="22"/>')+'</w:rPr><w:t xml:space="preserve">'+esc(t)+'</w:t></w:r></w:p>'}
+function cell(t,w,b){return '<w:tc><w:tcPr><w:tcW w:w="'+w+'" w:type="dxa"/></w:tcPr>'+para(t,{b:b})+'</w:tc>'}
+function table(head,rows,ws){const bd='<w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(x=>'<w:'+x+' w:val="single" w:sz="4" w:color="999999"/>').join("")+'</w:tblBorders>';
+return '<w:tbl><w:tblPr><w:tblW w:w="0" w:type="auto"/>'+bd+'</w:tblPr><w:tr>'+head.map((h,i)=>cell(h,ws[i],true)).join("")+'</w:tr>'+rows.map(r=>'<w:tr>'+r.map((c,i)=>cell(c,ws[i])).join("")+'</w:tr>').join("")+'</w:tbl>'}
+async function exportWord(){const a=advice,B=[];
+B.push(para("PHIẾU TƯ VẤN PHÁP LUẬT ĐẤT ĐAI",{h:1}));B.push(para("Ngày lập: "+new Date().toLocaleDateString("vi-VN")));
+B.push(para("Câu hỏi",{h:1}));B.push(para(a.cau_hoi||""));
+if(uploads.length){B.push(para("Tài liệu kèm theo: "+uploads.map(u=>u.name).join(", ")))}
+B.push(para("Tóm tắt",{h:1}));B.push(para(a.tom_tat||""));
+B.push(para("Phương hướng xử lý",{h:1}));B.push(para(a.huong_xu_ly||""));
+B.push(para("Trình tự thực hiện",{h:1}));
+B.push(table(["Bước","Nội dung công việc","Căn cứ","Hồ sơ","Thời hạn","Cơ quan"],(a.buoc||[]).map((s,i)=>[String(i+1),s.viec||"",s.can_cu||"",s.ho_so||"",s.thoi_han||"",s.co_quan||""]),[700,2600,1900,1900,1100,1200]));
+B.push(para("Văn bản căn cứ",{h:1}));
+B.push(table(["Số hiệu","Điều, khoản","Nội dung"],(a.can_cu||[]).map(x=>[x.so||"",x.dieu||"",x.noi_dung||""]),[2200,2200,5000]));
+B.push(para("Lưu ý",{h:1}));B.push(para(a.luu_y||""));
+B.push(para("Bản nháp tham khảo, cần đối chiếu toàn văn trước khi áp dụng."));
+const doc='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>'+B.join("")+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134"/></w:sectPr></w:body></w:document>';
+const z=new JSZip();
+z.file("[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+z.file("_rels/.rels",'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+z.file("word/document.xml",doc);
+const blob=await z.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+await downloads.save({filename:"Tu_van_dat_dai.docx",data:blob})}
+async function exportExcel(){const a=advice,wb=XLSX.utils.book_new();
+const s1=[["Câu hỏi",a.cau_hoi||""],["Tóm tắt",a.tom_tat||""],["Phương hướng xử lý",a.huong_xu_ly||""],["Lưu ý",a.luu_y||""],[],["Bước","Nội dung công việc","Căn cứ","Hồ sơ","Thời hạn","Cơ quan","Đã xong"]].concat((a.buoc||[]).map((s,i)=>[i+1,s.viec||"",s.can_cu||"",s.ho_so||"",s.thoi_han||"",s.co_quan||"",""]));
+const w1=XLSX.utils.aoa_to_sheet(s1);w1["!cols"]=[{wch:20},{wch:50},{wch:30},{wch:30},{wch:14},{wch:22},{wch:10}];XLSX.utils.book_append_sheet(wb,w1,"Các bước");
+const s2=[["Số hiệu","Điều, khoản","Nội dung"]].concat((a.can_cu||[]).map(x=>[x.so||"",x.dieu||"",x.noi_dung||""]));
+const w2=XLSX.utils.aoa_to_sheet(s2);w2["!cols"]=[{wch:26},{wch:26},{wch:70}];XLSX.utils.book_append_sheet(wb,w2,"Căn cứ pháp lý");
+const out=XLSX.write(wb,{bookType:"xlsx",type:"array"});
+await downloads.save({filename:"Tu_van_dat_dai.xlsx",data:new Blob([out],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})})}
+function guard(fn){return async()=>{if(!downloads)return;try{await fn()}catch(e){if(!(e&&e.code==="declined"))alert_note("Chưa xuất được file. Thử lại.")}}}
+function alert_note(m){const p=el("p","st-bad",m);$("body").appendChild(p)}
+$("xw").onclick=guard(exportWord);$("xx").onclick=guard(exportExcel);
+
+render();renderChips();
+(async()=>{
+try{sample=await claude.use("sample")}catch(e){}
+try{downloads=await claude.use("downloads")}catch(e){}
+if(sample)$("askbox").hidden=false;
+if(!downloads){$("xw").hidden=true;$("xx").hidden=true}
+let db=null;try{db=await claude.use("db")}catch(e){}
+if(db){dbRef=db;$("addbtn").hidden=false;
+$("addbtn").onclick=()=>{$("addp").hidden=!$("addp").hidden};
+$("f_cancel").onclick=()=>{$("addp").hidden=true};
+$("f_save").onclick=async()=>{const so=$("f_so").value.trim(),ten=$("f_ten").value.trim(),m=$("f_msg");
+if(!so||!ten){m.textContent="Nhập số hiệu và trích yếu.";return}
+$("f_save").disabled=true;m.textContent="Đang lưu…";
+try{await db.collection("added_docs").add({cap:$("f_cap").value,so:so,ten:ten,ban:$("f_ban").value.trim(),hl:$("f_hl").value.trim(),tt:$("f_tt").value.trim()||"Chưa xác định",pdf:$("f_pdf").value.trim(),nd:$("f_nd").value.slice(0,200000),added:new Date().toISOString()});
+m.textContent="Đã lưu "+so+". Văn bản đã vào danh mục và dùng khi tư vấn.";["f_so","f_ten","f_ban","f_hl","f_pdf","f_nd"].forEach(k=>$(k).value="")}
+catch(e){m.textContent=e&&e.code==="quota_exceeded"?"Kho dữ liệu đã đầy.":"Chưa lưu được. Bạn cần quyền chỉnh sửa trang này."}
+$("f_save").disabled=false};
+db.collection("added_docs").orderBy("added","desc").onSnapshot(s=>{
+const add=s.docs.map(x=>{const v=x.data();return Object.assign({},v,{id:x.id,mine:true,gc:v.gc||"Văn bản do bạn bổ sung",tra:tra(v.so)})});
+const cur=DATA[sel];DATA=BASE.concat(add);
+const k=cur?DATA.findIndex(d=>d.so===cur.so):-1;sel=k>=0?k:0;render()},e=>{})}
+})();
+
+return {show:function(){}};
+}
+
+/* ---------- 3. Bản đồ DGN ---------- */
+function mountMap(root){
+
+async function inflate(u){const ds=new DecompressionStream('deflate'),w=ds.writable.getWriter();w.write(u);w.close();return new Uint8Array(await new Response(ds.readable).arrayBuffer());}
+const cat=a=>{let n=0;for(const x of a)n+=x.length;const o=new Uint8Array(n);let p=0;for(const x of a){o.set(x,p);p+=x.length}return o};
+function readOLE(buf){
+ if(![0xD0,0xCF,0x11,0xE0].every((b,i)=>buf[i]===b))return null;
+ const dv=new DataView(buf.buffer,buf.byteOffset,buf.byteLength),u32=(v,o)=>v.getUint32(o,true);
+ const ss=1<<dv.getUint16(30,true),mss=1<<dv.getUint16(32,true),nfat=u32(dv,44),dirS=u32(dv,48),cut=u32(dv,56),mfS=u32(dv,60);
+ let dif=u32(dv,68),nd=u32(dv,72);
+ const sec=n=>buf.subarray(512+n*ss,512+(n+1)*ss),V=b=>new DataView(b.buffer,b.byteOffset,b.byteLength);
+ let fs=[];for(let i=0;i<109;i++)fs.push(u32(dv,76+i*4));
+ while(dif<0xFFFFFFFA&&nd-->0){const v=V(sec(dif)),n=ss/4;for(let i=0;i<n-1;i++)fs.push(u32(v,i*4));dif=u32(v,(n-1)*4)}
+ fs=fs.filter(x=>x<0xFFFFFFFA).slice(0,nfat);
+ const fat=[];for(const f of fs){const v=V(sec(f));for(let i=0;i<ss/4;i++)fat.push(u32(v,i*4))}
+ const chain=n=>{const p=[],s=new Set();while(n<0xFFFFFFFA&&!s.has(n)){s.add(n);p.push(sec(n));n=fat[n]}return cat(p)};
+ const dd=chain(dirS),dV=V(dd),E=[];
+ for(let i=0;i<dd.length/128;i++){const o=i*128,nl=dV.getUint16(o+64,true);
+  E.push({name:new TextDecoder('utf-16le').decode(dd.subarray(o,o+Math.max(nl-2,0))),type:dd[o+66],l:u32(dV,o+68),r:u32(dV,o+72),c:u32(dV,o+76),start:u32(dV,o+116),size:u32(dV,o+120)})}
+ const ms=E[0].start<0xFFFFFFFA?chain(E[0].start).subarray(0,E[0].size):new Uint8Array(0);
+ let mf=[];if(mfS<0xFFFFFFFA){const b=chain(mfS),v=V(b);for(let i=0;i<b.length/4;i++)mf.push(u32(v,i*4))}
+ const read=e=>{if(e.size<cut){const p=[];let n=e.start;while(n<0xFFFFFFFA){p.push(ms.subarray(n*mss,(n+1)*mss));n=mf[n]}return cat(p).subarray(0,e.size)}return chain(e.start).subarray(0,e.size)};
+ const files={};
+ const walk=(i,path)=>{const go=j=>{if(j===0xFFFFFFFF)return;go(E[j].l);const k=E[j],p=path+'/'+k.name;if(k.type===2)files[p]=k;else if(k.type===1)walk(j,p);go(E[j].r)};go(E[i].c)};
+ walk(0,'');
+ return{files,read};
+}
+async function dec(u){if(u[0]===0x78)return inflate(u);if(u.length>17&&u[16]===0x78)return inflate(u.subarray(16));return null}
+const TC='ĂÂÊÔƠƯĐăâêôơưđ'; // 0xA1..0xAE
+const TL={0xB5:'à',0xB6:'ả',0xB7:'ã',0xB8:'á',0xB9:'ạ',0xBB:'ằ',0xBC:'ẳ',0xBD:'ẵ',0xBE:'ắ',0xC6:'ặ',0xC7:'ầ',0xC8:'ẩ',0xC9:'ẫ',0xCA:'ấ',0xCB:'ậ',0xCC:'è',0xCE:'ẻ',0xCF:'ẽ',0xD0:'é',0xD1:'ẹ',0xD2:'ề',0xD3:'ể',0xD4:'ễ',0xD5:'ế',0xD6:'ệ',0xD7:'ì',0xD8:'ỉ',0xDC:'ĩ',0xDD:'í',0xDE:'ị',0xDF:'ò',0xE1:'ỏ',0xE2:'õ',0xE3:'ó',0xE4:'ọ',0xE5:'ồ',0xE6:'ổ',0xE7:'ỗ',0xE8:'ố',0xE9:'ộ',0xEA:'ờ',0xEB:'ở',0xEC:'ỡ',0xED:'ớ',0xEE:'ợ',0xEF:'ù',0xF1:'ủ',0xF2:'ũ',0xF3:'ú',0xF4:'ụ',0xF5:'ừ',0xF6:'ử',0xF7:'ữ',0xF8:'ứ',0xF9:'ự',0xFA:'ỳ',0xFB:'ỷ',0xFC:'ỹ',0xFD:'ý',0xFE:'ỵ'};
+function tcvn(b){let s='';for(const c of b){s+=c>=0xA1&&c<=0xAE?TC[c-0xA1]:TL[c]||String.fromCharCode(c)}return s}
+function dtxt(sb,hi){if(sb[0]===255&&sb[1]===254){const r=sb.subarray(2);let u=r.length%2===0;if(u)for(let i=1;i<r.length;i+=2)if(r[i]>31){u=false;break}return u?new TextDecoder('utf-16le').decode(r):tcvn(r.subarray(2))}return hi?tcvn(sb):new TextDecoder('latin1').decode(sb)}
+async function parseDGN(buf){
+ const o=readOLE(buf);if(!o)throw new Error('Không phải DGN V8 (OLE). File DGN V7 chưa được hỗ trợ.');
+ const F=Object.keys(o.files),models={};
+ for(const p of F){const m=p.match(/^\/Dgn-Md\/(#[^/]+)\/Dgn\^G\/\$(\d+)$/);if(m)(models[m[1]]??=[]).push([+m[2],p])}
+ // palette
+ let pal=null;const pat=[255,255,255,0,0,255,0,255,0,255,0,0];
+ for(const p of F){if(p.includes('Dgn^G')||p.includes('Dgn^Ix'))continue;const d=await dec(o.read(o.files[p])).catch(()=>null);if(!d)continue;
+  outer:for(let i=0;i<d.length-768;i++){for(let k=0;k<12;k++)if(d[i+k]!==pat[k])continue outer;pal=d.slice(i,i+768);break}if(pal)break}
+ const out={models:{},pal,stats:{}};
+ for(const id in models){
+  let org=[0,0];const mh=F.find(p=>p==='/Dgn-Md/'+id+'/Dgn~Mh');
+  if(mh){const d=await dec(o.read(o.files[mh]));if(d){const v=new DataView(d.buffer,d.byteOffset,d.byteLength);
+   for(let i=0;i+16<=d.length;i+=4){const a=v.getFloat64(i,true),b=v.getFloat64(i+8,true);
+    if(Math.abs(a)>=1e6&&Math.abs(b)>=1e6&&a%1000===0&&b%1000===0&&Math.abs(a)<1e13&&Math.abs(b)<1e13){org=[a,b];break}}}}
+  const prims=[],un={};
+  for(const [,p] of models[id].sort((a,b)=>a[0]-b[0])){
+   const d=await dec(o.read(o.files[p]));if(!d||d.length<20)continue;const v=new DataView(d.buffer,d.byteOffset,d.byteLength);
+   for(let pos=4;pos+104<=d.length;){
+    const fl=v.getUint32(pos,true),sz=v.getUint32(pos+4,true)*2,ao=v.getUint32(pos+8,true)*2;if(!sz||pos+sz>d.length)break;
+    const t=fl&0xff,lv=v.getUint32(pos+12,true),st=v.getInt32(pos+44,true),w=v.getUint32(pos+48,true),c=v.getUint32(pos+52,true);
+    const f=o=>v.getFloat64(pos+o,true),b={t,lv,c:c>255?0:c,w,st};
+    if(t===3){const nd=(ao-104)/16;if(nd===2)prims.push({...b,k:'L',p:[f(104),f(112),f(120),f(128)]});else un[t]=(un[t]||0)+1}
+    else if(t===4||t===6){const n=v.getUint32(pos+104,true),nd=(ao-112)/(n*8);if(nd===2&&n>1){const p=[];for(let i=0;i<n;i++)p.push(f(112+i*16),f(120+i*16));prims.push({...b,k:t===6?'S':'L',p})}else un[t]=(un[t]||0)+1}
+    else if(t===15){if(ao-104===40)prims.push({...b,k:'E',e:[f(104),f(112),f(120),f(128),f(136)]});else un[t]=(un[t]||0)+1}
+    else if(t===17){const n=v.getUint32(pos+108,true)>>>16,sb=d.subarray(pos+170,pos+170+n);let hi=false;for(const x of sb)if(x>=0xA1)hi=true;
+     prims.push({...b,k:'T',x:f(152),y:f(160),h:f(136),w:f(128),r:f(144),s:dtxt(sb,hi),font:v.getUint16(pos+108,true)})}
+    else if(t!==2&&t!==7)un[t]=(un[t]||0)+1;
+    pos+=sz+4}}
+  out.models[id]={prims,org,un};
+ }
+ return out;
+}
+
+
+const WA=6378137,WF=1/298.257223563,E2=WF*(2-WF),EP=E2/(1-E2),RAD=Math.PI/180;
+const MER=p=>WA*((1-E2/4-3*E2*E2/64-5*E2**3/256)*p-(3*E2/8+3*E2*E2/32+45*E2**3/1024)*Math.sin(2*p)+(15*E2*E2/256+45*E2**3/1024)*Math.sin(4*p)-35*E2**3/3072*Math.sin(6*p));
+function tmFwd(lat,lon,l0,k0){const p=lat*RAD,N=WA/Math.sqrt(1-E2*Math.sin(p)**2),T=Math.tan(p)**2,C=EP*Math.cos(p)**2,A=(lon-l0)*RAD*Math.cos(p);
+ return[500000+k0*N*(A+(1-T+C)*A**3/6+(5-18*T+T*T+72*C-58*EP)*A**5/120),k0*(MER(p)+N*Math.tan(p)*(A*A/2+(5-T+9*C+4*C*C)*A**4/24+(61-58*T+T*T+600*C-330*EP)*A**6/720))]}
+function tmInv(E,Nn,l0,k0){const x=E-500000,mu=Nn/k0/(WA*(1-E2/4-3*E2*E2/64-5*E2**3/256)),s=Math.sqrt(1-E2),e1=(1-s)/(1+s);
+ const f1=mu+(3*e1/2-27*e1**3/32)*Math.sin(2*mu)+(21*e1*e1/16-55*e1**4/32)*Math.sin(4*mu)+151*e1**3/96*Math.sin(6*mu)+1097*e1**4/512*Math.sin(8*mu);
+ const C=EP*Math.cos(f1)**2,T=Math.tan(f1)**2,N1=WA/Math.sqrt(1-E2*Math.sin(f1)**2),R1=WA*(1-E2)/(1-E2*Math.sin(f1)**2)**1.5,D=x/(N1*k0);
+ const lat=f1-N1*Math.tan(f1)/R1*(D*D/2-(5+3*T+10*C-4*C*C-9*EP)*D**4/24+(61+90*T+298*C+45*T*T-252*EP-3*C*C)*D**6/720);
+ const lon=l0*RAD+(D-(1+2*T+C)*D**3/6+(5-2*C+28*T-3*C*C+8*EP+24*T*T)*D**5/120)/Math.cos(f1);return[lat/RAD,lon/RAD]}
+
+
+const $=i=>root.getElementById(i),cv=$('cv'),ctx=cv.getContext('2d');
+let TAINT=false,gp=null,gw=null,gpf=0,PL=[],ggOn=false,gm=null,alMode=0,alPin=null,AU=[0,0],NT=0,NL=0,fname="",CAL={a:[1,0],b:[0,0],pts:[],rms:0},pin=null,satOn=true,pinMode=true,TL2=new Map(),R=null,M=null,pal=null,V={cx:0,cy:0,s:1},vis=new Set(),hits=[],hi=0,mark=null,raf=0,d=1;
+const DEF=['#fff','#00f','#0f0','#f00','#ff0','#f0f','#f80','#0ff'],DASH=[[],[3,4],[10,6],[12,4,3,4],[14,5],[2,4],[6,3,1,3],[16,8]];
+const col=c=>!c?'#fff':pal?`rgb(${pal[c*3]},${pal[c*3+1]},${pal[c*3+2]})`:DEF[c&7];
+const st=t=>$('st').textContent=t;
+const HP={t:[-191.90441429,-39.30318279,-111.45032835],r:[-0.00928836,0.01975479,-0.00427372].map(v=>v*Math.PI/648000),s:0.252906278e-6};
+function geo2ecef(la,lo,h){const p=la*RAD,l=lo*RAD,N=WA/Math.sqrt(1-E2*Math.sin(p)**2);return[(N+h)*Math.cos(p)*Math.cos(l),(N+h)*Math.cos(p)*Math.sin(l),(N*(1-E2)+h)*Math.sin(p)]}
+function ecef2geo(X,Y,Z){const lo=Math.atan2(Y,X),q=Math.hypot(X,Y);let p=Math.atan2(Z,q*(1-E2)),h=0;for(let i=0;i<6;i++){const N=WA/Math.sqrt(1-E2*Math.sin(p)**2);h=q/Math.cos(p)-N;p=Math.atan2(Z,q*(1-E2*N/(N+h)))}return[p/RAD,lo/RAD,h]}
+function helm(X,Y,Z){const[rx,ry,rz]=HP.r,k=1+HP.s;return[HP.t[0]+k*(X+rz*Y-ry*Z),HP.t[1]+k*(-rz*X+Y+rx*Z),HP.t[2]+k*(ry*X-rx*Y+Z)]}
+function vn2wgs(la,lo,h=0){const c=geo2ecef(la,lo,h),w=helm(...c);return ecef2geo(...w).slice(0,2)}
+function wgs2vn(la,lo,h=0){const w=geo2ecef(la,lo,h);let c=[w[0]-HP.t[0],w[1]-HP.t[1],w[2]-HP.t[2]];for(let i=0;i<4;i++){const f=helm(...c);c=[c[0]+w[0]-f[0],c[1]+w[1]-f[1],c[2]+w[2]-f[2]]}return ecef2geo(...c).slice(0,2)}
+
+
+const cmv=()=>+$('cm').value||105,k0v=()=>+$('k0').value;
+const T=(x,y)=>[CAL.a[0]*x-CAL.a[1]*y+CAL.b[0],CAL.a[0]*y+CAL.a[1]*x+CAL.b[1]];
+const Ti=(x,y)=>{const m=CAL.a[0]**2+CAL.a[1]**2,r=x-CAL.b[0],i=y-CAL.b[1];return[(r*CAL.a[0]+i*CAL.a[1])/m,(i*CAL.a[0]-r*CAL.a[1])/m]};
+const dtv=()=>$('dt').value==='1';
+const toLL0=(x,y)=>{const l=tmInv((x-M.org[0])/1000,(y-M.org[1])/1000,cmv(),k0v());return dtv()?vn2wgs(l[0],l[1]):l};
+const fromLL0=(la,lo)=>{const l=dtv()?wgs2vn(la,lo):[la,lo],e=tmFwd(l[0],l[1],cmv(),k0v());return[e[0]*1000+M.org[0],e[1]*1000+M.org[1]]};
+const toLL=(x,y)=>{const t=T(x,y);return toLL0(t[0],t[1])};
+function fitCal(){const P=CAL.pts,n=P.length;if(!n||!M){CAL.a=[1,0];CAL.b=[AU[0],AU[1]];CAL.rms=0;return}
+ const Z=P.map(p=>[p.x,p.y]),W=P.map(p=>fromLL0(p.la,p.lo)),mn=A=>[A.reduce((s,z)=>s+z[0],0)/n,A.reduce((s,z)=>s+z[1],0)/n],mz=mn(Z),mw=mn(W);let a=[1,0];
+ if(n>1){let nr=0,ni=0,dn=0;for(let i=0;i<n;i++){const zr=Z[i][0]-mz[0],zi=Z[i][1]-mz[1],wr=W[i][0]-mw[0],wi=W[i][1]-mw[1];nr+=zr*wr+zi*wi;ni+=zr*wi-zi*wr;dn+=zr*zr+zi*zi}if(dn)a=[nr/dn,ni/dn]}
+ CAL.a=a;CAL.b=[mw[0]-(a[0]*mz[0]-a[1]*mz[1])+AU[0],mw[1]-(a[0]*mz[1]+a[1]*mz[0])+AU[1]];
+ let s=0;for(let i=0;i<n;i++){const t=T(Z[i][0],Z[i][1]);s+=(t[0]-W[i][0])**2+(t[1]-W[i][1])**2}CAL.rms=Math.sqrt(s/n)/1000}
+function calUI(){const n=CAL.pts.length;const au=AU[0]||AU[1]?` Tự khớp ảnh: ΔE=${(AU[0]/1000).toFixed(1)} m, ΔN=${(AU[1]/1000).toFixed(1)} m.`:'';if(!n){$('cs').textContent='Chưa có điểm chuẩn.'+au;return}
+ const c=T(V.cx,V.cy),sc=(Math.hypot(CAL.a[0],CAL.a[1])-1)*1e6,ang=Math.atan2(CAL.a[1],CAL.a[0])*206265;
+ $('cs').innerHTML=`${n} điểm · dịch ΔE=${((c[0]-V.cx)/1000).toFixed(2)} m, ΔN=${((c[1]-V.cy)/1000).toFixed(2)} m`+(n>1?` · xoay ${ang.toFixed(1)}″ · tỉ lệ ${sc.toFixed(0)} ppm · <b>sai số dư RMS ${CAL.rms.toFixed(2)} m</b>`+(Math.abs(sc)>300||Math.abs(ang)>120?' ⚠ bất thường, kiểm tra lại điểm chuẩn':''):' · cần ≥3 điểm để biết độ chính xác')}
+function saveCal(){try{localStorage.setItem('dgncal:'+fname,JSON.stringify(CAL.pts));localStorage.setItem('dgnau:'+fname,JSON.stringify(AU))}catch(e){}}
+function loadCal(){try{CAL.pts=JSON.parse(localStorage.getItem('dgncal:'+fname)||'[]')}catch(e){CAL.pts=[]}try{AU=JSON.parse(localStorage.getItem('dgnau:'+fname)||'[0,0]')}catch(e){AU=[0,0]}fitCal();calUI()}
+const fromLL=(la,lo)=>{const u=fromLL0(la,lo);return Ti(u[0],u[1])};
+const t2l=(tx,ty,n)=>[Math.atan(Math.sinh(Math.PI*(1-2*ty/n)))/RAD,tx/n*360-180];
+const zmx=()=>+$('mz').value||(TAINT?18:19);
+function blankTile(t){try{const c=document.createElement('canvas');c.width=c.height=16;const x=c.getContext('2d');x.drawImage(t,0,0,16,16);const d=x.getImageData(0,0,16,16).data;let g=0,mn=255,mx=0;for(let i=0;i<d.length;i+=4){if(Math.abs(d[i]-d[i+1])<7&&Math.abs(d[i+1]-d[i+2])<7&&d[i]>165&&d[i]<240)g++;if(d[i]<mn)mn=d[i];if(d[i]>mx)mx=d[i]}return g>190&&mx-mn<70}catch(e){TAINT=true;return false}}
+function tile(z,x,y){const k=z+'/'+x+'/'+y;let t=TL2.get(k);if(!t){if(TL2.size>500)TL2.clear();const u=`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;t=new Image();t.crossOrigin='anonymous';t.onload=()=>{t.__b=blankTile(t);redraw()};t.onerror=()=>{if(t.crossOrigin){t.crossOrigin=null;t.removeAttribute('crossorigin');t.src=u+'?nc'}};t.src=u;TL2.set(k,t)}return t}
+function tiles(X,Y,x0,x1,y0,y1,cx2=ctx){NT=0;NL=0;const c=toLL((x0+x1)/2,(y0+y1)/2),z=Math.max(3,Math.min(zmx(),Math.round(Math.log2(156543.03*Math.cos(c[0]*RAD)*V.s*1000)))),n=2**z;
+ const cs=[[x0,y0],[x1,y0],[x0,y1],[x1,y1]].map(p=>toLL(p[0],p[1])),tx=cs.map(l=>(l[1]+180)/360*n),ty=cs.map(l=>(1-Math.log(Math.tan(l[0]*RAD)+1/Math.cos(l[0]*RAD))/Math.PI)/2*n);
+ const a=Math.floor(Math.min(...tx)),b=Math.floor(Math.max(...tx)),e=Math.floor(Math.min(...ty)),f=Math.floor(Math.max(...ty));if((b-a+1)*(f-e+1)>90)return;
+ const P=(i,j)=>{const l=t2l(i,j,n),u=fromLL(l[0],l[1]);return[X(u[0]),Y(u[1])]};
+ for(let i=a;i<=b;i++)for(let j=e;j<=f;j++){let t=tile(z,i,j),lz=0,ci=i,cj=j;NT++;if(!t.complete||!t.naturalWidth)continue;NL++;
+  while(t.__b&&lz<4&&z-lz>3){lz++;ci>>=1;cj>>=1;t=tile(z-lz,ci,cj);if(!t.complete||!t.naturalWidth)break}
+  if(!t.complete||!t.naturalWidth||(t.__b&&lz>0))continue;
+  const A=P(i,j),B=P(i+1,j),C=P(i,j+1),k=t.naturalWidth/2**lz;
+  cx2.setTransform((B[0]-A[0])/k,(B[1]-A[1])/k,(C[0]-A[0])/k,(C[1]-A[1])/k,A[0],A[1]);cx2.drawImage(t,(i-(ci<<lz))*k,(j-(cj<<lz))*k,k,k,0,0,k,k)}
+ cx2.setTransform(1,0,0,1,0,0)}
+function setPin(p){pin=p;const pp=$('pp');if(!p){pp.style.display='none';draw();return}const l=toLL(p.x,p.y),q=l[0].toFixed(6)+','+l[1].toFixed(6);
+ $('pt').textContent=(nearP(p)?'Thửa gần nhất: '+nearP(p)+'  ·  ':'')+`Vĩ độ, kinh độ: ${l[0].toFixed(6)}, ${l[1].toFixed(6)}  ·  VN-2000: X=${((p.y-M.org[1])/1000).toFixed(2)} Y=${((p.x-M.org[0])/1000).toFixed(2)}`;
+ $('gm').href='https://www.google.com/maps/search/?api=1&query='+q;$('gd').href='https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+q;pp.style.display='flex';draw()}
+$('sat').onclick=e=>{satOn=!satOn;e.target.classList.toggle('on',satOn);draw()};
+$('pn').onclick=e=>{pinMode=!pinMode;e.target.classList.toggle('on',pinMode);st(pinMode?'Chạm vào bản đồ để đặt ghim':'Đã tắt chế độ ghim')};
+$('px').onclick=()=>setPin(null);$('cp').onclick=()=>navigator.clipboard&&navigator.clipboard.writeText($('pt').textContent.match(/-?\d+\.\d{6}, -?\d+\.\d{6}/)[0]);
+$('cm').oninput=$('k0').onchange=$('dt').onchange=()=>{fitCal();calUI();if(pin)setPin(pin);draw()};
+function bbl(a,W,H,r){const t=new Float32Array(a.length),o=new Float32Array(a.length),k=2*r+1,mx=(v,m)=>v<0?0:v>m?m:v;
+ for(let y=0;y<H;y++){let s=0;const b=y*W;for(let x=-r;x<=r;x++)s+=a[b+mx(x,W-1)];for(let x=0;x<W;x++){t[b+x]=s/k;s+=a[b+mx(x+r+1,W-1)]-a[b+mx(x-r,W-1)]}}
+ for(let x=0;x<W;x++){let s=0;for(let y=-r;y<=r;y++)s+=t[mx(y,H-1)*W+x];for(let y=0;y<H;y++){o[y*W+x]=s/k;s+=t[mx(y+r+1,H-1)*W+x]-t[mx(y-r,H-1)*W+x]}}return o}
+async function autoAlign(){if(!M||!satOn){st('Bật “Vệ tinh” và mở file DGN trước');return}
+ st('Đang khớp ranh với ảnh vệ tinh …');await new Promise(r=>setTimeout(r,30));
+ const W=cv.width,H=cv.height,{cx,cy,s}=V,X=x=>(x-cx)*s+W/2,Y=y=>H/2-(y-cy)*s,x0=cx-W/2/s,x1=cx+W/2/s,y0=cy-H/2/s,y1=cy+H/2/s,wk=s*1000;
+ const oc=document.createElement('canvas');oc.width=W;oc.height=H;const o=oc.getContext('2d');o.fillStyle='#000';o.fillRect(0,0,W,H);tiles(X,Y,x0,x1,y0,y1,o);
+ if(!NT||NL<NT){st('Ảnh vệ tinh chưa tải xong (hoặc đang tắt). Đợi vài giây rồi bấm lại.');return}
+ if(wk<.25){st('Hãy phóng to vào khu vực có thửa (ít nhất ~0,3 điểm ảnh/mét) rồi bấm lại.');return}
+ let D;try{D=o.getImageData(0,0,W,H).data}catch(e){st('Trình duyệt chặn đọc ảnh vệ tinh (CORS). Hãy dùng “Hiệu chỉnh” bằng điểm chuẩn.');return}
+ const gr=new Float32Array(W*H);for(let i=0;i<W*H;i++)gr[i]=.299*D[4*i]+.587*D[4*i+1]+.114*D[4*i+2];
+ const gs=bbl(gr,W,H,1),G=new Float32Array(W*H);
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const i=y*W+x;G[i]=Math.hypot(gs[i-W+1]+2*gs[i+1]+gs[i+W+1]-gs[i-W-1]-2*gs[i-1]-gs[i+W-1],gs[i+W-1]+2*gs[i+W]+gs[i+W+1]-gs[i-W-1]-2*gs[i-W]-gs[i-W+1])}
+ let pts=[];const stp=Math.max(2,wk);
+ for(const p of M.prims){if(p.k==='T'||p.k==='E'||!vis.has(p.lv))continue;const q=p.b;if(q[2]<x0||q[0]>x1||q[3]<y0||q[1]>y1)continue;const a=p.p,n=a.length,m=p.k==='S'?n:n-2;
+  for(let i=0;i<m;i+=2){const j=(i+2)%n,ax=X(a[i]),ay=Y(a[i+1]),bx=X(a[j]),by=Y(a[j+1]),c=Math.max(1,Math.floor(Math.hypot(bx-ax,by-ay)/stp));for(let k=0;k<c;k++)pts.push(ax+(bx-ax)*k/c,ay+(by-ay)*k/c)}}
+ const th=Math.ceil(pts.length/2/8000);if(th>1){const t=[];for(let i=0;i<pts.length;i+=2*th)t.push(pts[i],pts[i+1]);pts=t}
+ if(pts.length<400){st('Quá ít đường ranh trong khung nhìn để khớp.');return}
+ const sc=(A,dx,dy)=>{let u=0,c=0;for(let i=0;i<pts.length;i+=2){const x=Math.round(pts[i]+dx),y=Math.round(pts[i+1]+dy);if(x>=0&&x<W&&y>=0&&y<H){u+=A[y*W+x];c++}}return c>pts.length/4?u/c:0};
+ const srch=(A,R,sp,ox,oy)=>{let b=-1,bx=ox,by=oy;const all=[];for(let dy=-R;dy<=R;dy+=sp)for(let dx=-R;dx<=R;dx+=sp){const v=sc(A,ox+dx,oy+dy);all.push(v);if(v>b){b=v;bx=ox+dx;by=oy+dy}}return{b,bx,by,all}};
+ const r1=srch(bbl(G,W,H,Math.max(1,Math.round(6*wk))),Math.round(150*wk),Math.max(1,Math.round(5*wk)),0,0);
+ const r2=srch(bbl(G,W,H,Math.max(1,Math.round(1.5*wk))),Math.round(7*wk),Math.max(1,Math.round(wk)),r1.bx,r1.by);
+ const r3=srch(bbl(G,W,H,Math.max(1,Math.round(.6*wk))),Math.round(1.5*wk),Math.max(1,Math.round(.4*wk)),r2.bx,r2.by);
+ const mu=r1.all.reduce((a,b)=>a+b,0)/r1.all.length,sd=Math.sqrt(r1.all.reduce((a,b)=>a+(b-mu)**2,0)/r1.all.length)||1,z=(r1.b-mu)/sd,dE=r3.bx/wk,dN=-r3.by/wk;
+ if(z<3){st(`Không đủ đặc trưng để khớp tin cậy (z=${z.toFixed(1)}). Hãy dùng điểm chuẩn.`);return}
+ AU[0]+=r3.bx/s;AU[1]+=-r3.by/s;fitCal();saveCal();calUI();if(pin)setPin(pin);draw();
+ st(`Đã khớp: dịch ranh ΔE=${dE.toFixed(1)} m, ΔN=${dN.toFixed(1)} m · độ tin cậy z=${z.toFixed(1)} (≥5 là tốt). Bấm lại để tinh chỉnh.`)}
+$('au').onclick=autoAlign;
+$('gg').onclick=e=>{if(ggOn){ggOn=false;e.target.classList.remove('on');$('gmap').style.display='none';draw();return}
+ ggLoad(()=>{if(!gm){gm=new google.maps.Map($('gmap'),{mapId:'DEMO_MAP_ID',mapTypeId:'satellite',disableDefaultUI:true,gestureHandling:'none',keyboardShortcuts:false,isFractionalZoomEnabled:true,center:{lat:21.4,lng:105.5},zoom:17});
+  gm.addListener('idle',()=>{const z=gm.getZoom();if(ggOn&&gm.__w&&Math.abs(z-gm.__w)>.05&&M){const c=toLL(V.cx,V.cy);V.s=2**z/(156543.03*Math.cos(c[0]*RAD)*1000)*d;draw()}})}
+  ggOn=true;satOn=false;e.target.classList.add('on');const sb=$('sat');sb&&sb.classList.remove('on');$('gmap').style.display='block';draw()})};
+$('a2').onclick=e=>{alMode=alMode?0:1;alPin=null;e.target.classList.toggle('on',alMode>0);st(alMode?'Bước 1: chạm một điểm rõ nét TRÊN BẢN VẼ (góc thửa, góc nhà)':'Đã tắt căn 2 chạm')};
+$('cb').onclick=()=>{const l=$('cl');l.style.display=l.style.display==='block'?'none':'block';calUI()};
+$('ca').onclick=()=>{if(!pin){$('cs').textContent='Hãy ghim một điểm trước.';return}const m=($('cc').value.match(/-?\d+(?:\.\d+)?/g)||[]).map(Number);if(m.length<2){$('cs').textContent='Chưa đọc được tọa độ (dạng: 21.43961, 105.54112).';return}
+ let[la,lo]=m;if(la>90||la>lo)[la,lo]=[lo,la];if(la<8||la>24||lo<102||lo>110){$('cs').textContent='Tọa độ nằm ngoài lãnh thổ Việt Nam, kiểm tra lại.';return}
+ const t=T(pin.x,pin.y),ti=Ti(t[0],t[1]);AU=[0,0];CAL.pts.push({x:pin.x,y:pin.y,la,lo});fitCal();saveCal();$('cc').value='';calUI();setPin(pin);draw()};
+$('cx').onclick=()=>{AU=[0,0];CAL.pts=[];fitCal();saveCal();calUI();if(pin)setPin(pin);draw()};
+function scrLL(px,py){if(ggOn&&gm){const c=toLL(V.cx,V.cy),z=gm.__w,Wd=256*2**z,cwx=(c[1]+180)/360*Wd,cwy=(1-Math.log(Math.tan(c[0]*RAD)+1/Math.cos(c[0]*RAD))/Math.PI)/2*Wd,tx=cwx+(px-cv.width/2)/d,ty=cwy+(py-cv.height/2)/d;
+  return[Math.atan(Math.sinh(Math.PI*(1-2*ty/Wd)))/RAD,tx/Wd*360-180]}return toLL((px-cv.width/2)/V.s+V.cx,V.cy+(cv.height/2-py)/V.s)}
+function tapAt(px,py){const p={x:(px-cv.width/2)/V.s+V.cx,y:V.cy+(cv.height/2-py)/V.s};
+ if(!alMode){setPin(p);return}
+ if(alMode===1){alPin=p;pin=p;alMode=2;draw();st('Bước 2: chạm đúng điểm đó trên ẢNH VỆ TINH (phóng to để chính xác)');return}
+ const l=scrLL(px,py);CAL.pts.push({x:alPin.x,y:alPin.y,la:l[0],lo:l[1]});AU=[0,0];fitCal();saveCal();calUI();const n=CAL.pts.length;setPin(alPin);alPin=null;alMode=1;
+ st(`Đã thêm điểm chuẩn ${n}`+(n>1?` · sai số dư RMS ${CAL.rms.toFixed(2)} m`:' (cần ≥3 điểm, rải đều)')+' — chạm điểm tiếp theo trên bản vẽ')}
+async function ggLoad(cb){let k=null;try{k=localStorage.getItem('gmkey')}catch(e){}k=k||await uiPrompt('Dán khóa API Google Maps (đã bật Maps JavaScript API):');if(!k)return;try{localStorage.setItem('gmkey',k)}catch(e){}
+ if(window.google&&google.maps){cb();return}window.__gmReady=cb;const s=document.createElement('script');s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(k)+'&v=weekly&callback=__gmReady';s.onerror=()=>st('Không tải được Google Maps: kiểm tra mạng và khóa API');document.head.appendChild(s)}
+window.gm_authFailure=()=>{st('Google từ chối khóa API (kiểm tra khóa, đã bật Maps JavaScript API và thanh toán).');try{localStorage.removeItem('gmkey')}catch(e){}};
+function buildParcels(){const L=M.prims.filter(p=>p.k==='T'&&(p.lv===13||p.lv===19||p.lv===3)&&p.h<2600&&p.s.length<=12&&!/Tờ|Tổng|Thành/.test(p.s)),par=L.map((_,i)=>i),fd=i=>par[i]===i?i:par[i]=fd(par[i]),RR=6000,cell=new Map(),gt=k=>{let v=cell.get(k);if(!v){v=[];cell.set(k,v)}return v};
+ L.forEach((p,i)=>gt(Math.floor(p.x/RR)+','+Math.floor(p.y/RR)).push(i));
+ L.forEach((p,i)=>{const cx=Math.floor(p.x/RR),cy=Math.floor(p.y/RR);for(let a=-1;a<=1;a++)for(let b=-1;b<=1;b++)for(const j of cell.get((cx+a)+','+(cy+b))||[])if(j>i&&Math.hypot(L[j].x-p.x,L[j].y-p.y)<RR)par[fd(j)]=fd(i)});
+ const g=new Map();L.forEach((p,i)=>{const k=fd(i);if(!g.has(k))g.set(k,[]);g.get(k).push(p)});
+ PL=[...g.values()].map(a=>{a.sort((p,q)=>q.y-p.y||p.x-q.x);return{n:a.map(p=>p.s).join(' | '),x:a.reduce((s,p)=>s+p.x,0)/a.length,y:a.reduce((s,p)=>s+p.y,0)/a.length}})}
+const nearP=p=>{let b=null,bd=25000;for(const c of PL){const q=Math.hypot(c.x-p.x,c.y-p.y);if(q<bd){bd=q;b=c}}return b?b.n:''};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const idb=()=>new Promise((ok,no)=>{const r=indexedDB.open('mapdgn',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>ok(r.result);r.onerror=()=>no(r.error)});
+const dbx=async(m,fn)=>{const db=await idb();return new Promise((ok,no)=>{const t=db.transaction('f',m),q=fn(t.objectStore('f'));t.oncomplete=()=>ok(q&&q.result);t.onerror=()=>no(t.error)})};
+const dbPut=(k,v)=>dbx('readwrite',s=>s.put(v,k)),dbGet=k=>dbx('readonly',s=>s.get(k)),dbDel=k=>dbx('readwrite',s=>s.delete(k)),dbKeys=()=>dbx('readonly',s=>s.getAllKeys());
+const LIC_PUB={"kty":"EC","crv":"P-256","x":"WARx_rcX7ky4qi-xyqWQvvs65g_lgR288CwmztzZeh8","y":"pSDVWBtZKJSCHjUtDpKekNZ0GfRfV6viFk4oB-WZgIk"},REVOKED=[],TRIAL=1000000;
+let licOK=false,licId='';
+const b64u=s=>{s=s.replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u};
+const lcExtract=t=>{const m=(t||'').replace(/\s+/g,'').match(/MAPDGN-[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{86}/);return m?m[0]:''};
+async function verifyCode(code){try{if(!code)return null;const[p,s]=code.slice(7).split('.');const id=new TextDecoder().decode(b64u(p));if(REVOKED.includes(id))return null;
+ const key=await crypto.subtle.importKey('jwk',LIC_PUB,{name:'ECDSA',namedCurve:'P-256'},false,['verify']);
+ return await crypto.subtle.verify({name:'ECDSA',hash:'SHA-256'},key,b64u(s),new TextEncoder().encode('MAPDGN|'+id))?id:null}catch(e){return null}}
+function updLic(){const pt=$('pt');if(pt){pt.style.userSelect=licOK?'':'none';pt.style.webkitUserSelect=licOK?'':'none';pt.style.webkitTouchCallout=licOK?'':'none'}[['gd','Chỉ đường'],['gm','Mở Google Maps'],['gg','Nền Google'],['cp','Sao chép']].forEach(([i,t])=>{const g=$(i);if(g)g.textContent=(licOK?'':'🔒 ')+t});$('lcb').style.display=licOK?'none':'block';$('lk').textContent=licOK?'🔑 Đã kích hoạt ('+licId+')':'🔑 Kích hoạt'}
+function openLic(msg){$('lct').textContent=licOK?'Đã kích hoạt bản quyền, mã '+licId+'. Cảm ơn bạn đã ủng hộ.':'Bản dùng thử chỉ mở được file bản đồ dưới 1 MB. Nhập mã kích hoạt để mở file lớn và dùng các chức năng Google Map (chỉ đường, mở bản đồ, nền Google, sao chép tọa độ).';$('lcm').textContent=msg||'';$('lcc').style.display=licOK?'none':'block';$('lc').style.display='flex'}
+async function checkLic(){let c='';try{const m=lcExtract(decodeURIComponent(location.hash));if(m){localStorage.setItem('mapdgn_lic',m);history.replaceState(null,'',location.pathname+location.search)}c=localStorage.getItem('mapdgn_lic')||''}catch(e){}
+ if(c&&window.crypto&&crypto.subtle){const id=await verifyCode(c);if(id){licOK=true;licId=id}else{try{localStorage.removeItem('mapdgn_lic')}catch(e){}}}updLic()}
+let licReady=checkLic();
+[['gd','Chỉ đường theo Google Map'],['gm','Mở bản đồ Google Map'],['gg','Nền bản đồ Google'],['cp','Sao chép tọa độ']].forEach(([i,t])=>$(i).addEventListener('click',e=>{if(!licOK){e.preventDefault();e.stopImmediatePropagation();openLic('Chức năng '+t+' chỉ có ở bản đã kích hoạt. Liên hệ Nguyễn Xuân Thủy – ĐT 0972839747 để lấy mã kích hoạt đầy đủ tính năng.')}},true));
+updLic();
+$('lcb').onclick=()=>openLic();$('lk').onclick=()=>openLic();$('lcx').onclick=()=>{$('lc').style.display='none'};
+$('lcgo').onclick=async()=>{if(!(window.crypto&&crypto.subtle)){$('lcm').textContent='Cần mở ứng dụng bằng địa chỉ https:// để kích hoạt.';return}
+ const c=lcExtract($('lcin').value);if(!c){$('lcm').textContent='Chưa thấy mã hợp lệ (bắt đầu bằng MAPDGN-).';return}
+ const id=await verifyCode(c);if(!id){$('lcm').textContent='Mã không đúng hoặc đã bị thu hồi.';return}
+ try{localStorage.setItem('mapdgn_lic',c)}catch(e){}licOK=true;licId=id;updLic();$('lcin').value='';openLic();st('Đã kích hoạt, mã '+id)};
+function size(){const r=$('w').getBoundingClientRect();d=devicePixelRatio||1;cv.width=r.width*d;cv.height=r.height*d;draw()}
+function bbox(p){if(p.k==='T')return[p.x,p.y,p.x+p.w,p.y+p.h];if(p.k==='E'){const e=p.e,r=Math.max(e[0],e[1]);return[e[3]-r,e[4]-r,e[3]+r,e[4]+r]}
+ let a=1/0,b=1/0,c=-1/0,e=-1/0;for(let i=0;i<p.p.length;i+=2){const x=p.p[i],y=p.p[i+1];if(x<a)a=x;if(x>c)c=x;if(y<b)b=y;if(y>e)e=y}return[a,b,c,e]}
+function fit(){let a=1/0,b=1/0,c=-1/0,e=-1/0;for(const p of M.prims)if(p.k!=='T'&&vis.has(p.lv)){const q=p.b;a=Math.min(a,q[0]);b=Math.min(b,q[1]);c=Math.max(c,q[2]);e=Math.max(e,q[3])}
+ if(a===1/0)return;V.cx=(a+c)/2;V.cy=(b+e)/2;V.s=Math.min(cv.width/(c-a||1),cv.height/(e-b||1))*.95;draw()}
+function draw(){raf=0;const W=cv.width,H=cv.height;ctx.fillStyle='#000';ggOn?ctx.clearRect(0,0,W,H):ctx.fillRect(0,0,W,H);if(!M)return;
+ const{cx,cy,s}=V,X=x=>(x-cx)*s+W/2,Y=y=>H/2-(y-cy)*s,x0=cx-W/2/s,x1=cx+W/2/s,y0=cy-H/2/s,y1=cy+H/2/s;
+ if(ggOn&&gm){const c=toLL(V.cx,V.cy),z=Math.max(1,Math.min(21,Math.log2(156543.03*Math.cos(c[0]*RAD)*V.s/d*1000)));gm.__w=z;gm.moveCamera({center:{lat:c[0],lng:c[1]},zoom:z})}else if(satOn)tiles(X,Y,x0,x1,y0,y1);
+ ctx.lineJoin='round';let ld='';
+ for(const p of M.prims){if(!vis.has(p.lv))continue;const q=p.b;if(q[2]<x0||q[0]>x1||q[3]<y0||q[1]>y1)continue;
+  if(p.k==='T'){const fs=p.h*s*1.25;if(fs<5)continue;ctx.save();ctx.translate(X(p.x),Y(p.y));ctx.rotate(-p.r);ctx.fillStyle=col(p.c);ctx.font=fs+'px Arial,sans-serif';ctx.fillText(p.s,0,0);ctx.restore();continue}
+  ctx.strokeStyle=col(p.c);ctx.lineWidth=(.8+Math.min(p.w,5)*.35)*d;const dk=p.st>0&&p.st<8?p.st:0;if(dk+''!==ld){ctx.setLineDash(DASH[dk].map(v=>v*d));ld=dk+''}
+  ctx.beginPath();
+  if(p.k==='E'){const e=p.e;ctx.ellipse(X(e[3]),Y(e[4]),Math.max(e[0]*s,.5),Math.max(e[1]*s,.5),-e[2],0,7)}
+  else{const a=p.p;ctx.moveTo(X(a[0]),Y(a[1]));for(let i=2;i<a.length;i+=2)ctx.lineTo(X(a[i]),Y(a[i+1]));if(p.k==='S')ctx.closePath()}
+  ctx.stroke()}
+ ctx.setLineDash([]);if(satOn&&!ggOn){ctx.fillStyle='#fff';ctx.font=11*d+'px sans-serif';ctx.fillText('Ảnh: Esri World Imagery (ước lượng WGS84, lệch vài mét so với VN-2000)',6*d,H-6*d)}
+ if(gp){const gx=X(gp.x),gy=Y(gp.y);ctx.fillStyle='rgba(30,120,255,.18)';ctx.beginPath();ctx.arc(gx,gy,Math.max(9*d,gp.acc*1000*s),0,7);ctx.fill();ctx.fillStyle='#1e78ff';ctx.strokeStyle='#fff';ctx.lineWidth=2*d;ctx.beginPath();ctx.arc(gx,gy,7*d,0,7);ctx.fill();ctx.stroke()}
+ if(pin){const px=X(pin.x),py=Y(pin.y),r=11*d;ctx.fillStyle='#e53935';ctx.strokeStyle='#fff';ctx.lineWidth=2*d;ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(px-r*.8,py-r*2);ctx.arc(px,py-r*2.4,r,Math.PI*.8,Math.PI*.2);ctx.closePath();ctx.fill();ctx.stroke();ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(px,py-r*2.4,r*.4,0,7);ctx.fill()}
+ if(mark){ctx.strokeStyle='#ff3b30';ctx.lineWidth=3*d;ctx.beginPath();ctx.arc(X(mark.x),Y(mark.y),20*d,0,7);ctx.stroke()}}
+const redraw=()=>{if(!raf)raf=requestAnimationFrame(draw)};
+function zoomAt(px,py,f){const{s,cx,cy}=V,H=cv.height,W=cv.width,wx=(px-W/2)/s+cx,wy=cy+(H/2-py)/s;V.s=s*f;V.cx=wx-(px-W/2)/V.s;V.cy=wy-(H/2-py)/V.s;redraw()}
+function useModel(id){M=R.models[id];loadCal();buildParcels();pal=R.pal;const lc={},cc={};
+ for(const p of M.prims){p.b=bbox(p);lc[p.lv]=(lc[p.lv]||0)+1;(cc[p.lv]??={})[p.c]=(cc[p.lv][p.c]||0)+1}
+ vis=new Set(Object.keys(lc).map(Number));mark=null;$('hint').style.display='none';
+ $('lv').innerHTML='<div style="display:flex;gap:6px;margin-bottom:6px"><button id="la">Tất cả</button><button id="ln">Bỏ hết</button></div>'+Object.keys(lc).map(Number).sort((a,b)=>a-b).map(l=>{
+  const top=Object.entries(cc[l]).sort((a,b)=>b[1]-a[1])[0][0];return`<label><input type="checkbox" data-l="${l}" checked><i style="background:${col(+top)}"></i>Lớp ${l} <small>(${lc[l]})</small></label>`}).join('');
+ $('la').onclick=()=>tog(true);$('ln').onclick=()=>tog(false);
+ $('lv').onchange=e=>{const l=+e.target.dataset.l;e.target.checked?vis.add(l):vis.delete(l);draw()};
+ const un=Object.entries(M.un).map(([t,n])=>`loại ${t}×${n}`).join(', ');
+ st(`${M.prims.length} đối tượng · ${Object.keys(lc).length} lớp`+(un?` · chưa vẽ: ${un}`:''));fit()}
+function tog(on){vis=new Set(on?Object.keys(M.prims.reduce((o,p)=>(o[p.lv]=1,o),{})).map(Number):[]);root.querySelectorAll('#lv input').forEach(i=>i.checked=on);draw()}
+async function load(file){await licReady;if(!licOK&&file.size>=TRIAL){st('Bản dùng thử chỉ mở file dưới 1 MB. Cần kích hoạt để mở file này.');openLic('File '+(file.size/1e6).toFixed(1)+' MB vượt giới hạn dùng thử.');return}await loadBuf(file.name,new Uint8Array(await file.arrayBuffer()),true)}
+async function loadBuf(name,u8,save){await licReady;if(!licOK&&u8.length>=TRIAL){st('Bản dùng thử chỉ mở file dưới 1 MB. Cần kích hoạt để mở file này.');openLic('File '+(u8.length/1e6).toFixed(1)+' MB vượt giới hạn dùng thử.');return}fname=name;st('Đang đọc '+name+' …');await new Promise(r=>setTimeout(r,30));
+ try{R=await parseDGN(u8)}catch(e){st('Lỗi: '+e.message);return}
+ const ids=Object.keys(R.models).sort((a,b)=>R.models[b].prims.length-R.models[a].prims.length);
+ if(!ids.length){st('Không tìm thấy dữ liệu đồ họa trong file');return}
+ const s=$('md');s.innerHTML=ids.map(i=>`<option value="${i}">Model ${i} (${R.models[i].prims.length})</option>`).join('');s.hidden=ids.length<2;s.onchange=()=>useModel(s.value);useModel(ids[0]);if(save){dbPut(name,u8.slice()).catch(()=>{});try{localStorage.setItem('last',name)}catch(e){}}}
+$('f').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+root.host.ondragover=e=>e.preventDefault();root.host.ondrop=e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])};
+$('fit').onclick=()=>M&&fit();$('lb').onclick=()=>{const l=$('lv');l.style.display=l.style.display==='block'?'none':'block'};
+$('q').onkeydown=e=>{if(e.key!=='Enter'||!M)return;const k=e.target.value.trim().toLowerCase();if(!k)return;
+ if(e.target.dataset.k!==k){e.target.dataset.k=k;hits=M.prims.filter(p=>p.k==='T'&&p.s.toLowerCase().includes(k));hi=0}else hi=(hi+1)%(hits.length||1);
+ if(!hits.length){mark=null;st('Không tìm thấy “'+k+'”');draw();return}
+ const p=hits[hi];mark=p;vis.add(p.lv);const cb=root.querySelector(`#lv input[data-l="${p.lv}"]`);if(cb)cb.checked=true;
+ V.cx=p.x+p.w/2;V.cy=p.y;V.s=Math.max(V.s,60*d/(p.h*1.25));setPin({x:p.x+p.w/2,y:p.y+p.h/2});st(`Kết quả ${hi+1}/${hits.length}: “${p.s}” — Enter để xem kết quả tiếp`);draw()};
+// pan / zoom / pinch
+const P=new Map();let pd=0;
+let dn=null;cv.onpointerdown=e=>{dn=[e.clientX,e.clientY,Date.now(),P.size];cv.setPointerCapture(e.pointerId);P.set(e.pointerId,[e.clientX,e.clientY]);pd=0};
+cv.onpointerup=cv.onpointercancel=e=>{if(e.type==='pointerup'&&(pinMode||alMode)&&M&&dn&&!dn[3]&&Math.hypot(e.clientX-dn[0],e.clientY-dn[1])<6&&Date.now()-dn[2]<600){const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*d,py=(e.clientY-r.top)*d;tapAt(px,py)}P.delete(e.pointerId);pd=0};
+cv.onpointermove=e=>{const r=cv.getBoundingClientRect(),px=(e.clientX-r.left)*d,py=(e.clientY-r.top)*d;
+ if(M){const x=(px-cv.width/2)/V.s+V.cx,y=V.cy+(cv.height/2-py)/V.s,o=M.org;
+  if(!P.size)$('st').dataset.c=`X(Bắc)=${((y-o[1])/1000).toFixed(2)}  Y(Đông)=${((x-o[0])/1000).toFixed(2)}`,$('st').textContent=$('st').dataset.c}
+ if(!P.has(e.pointerId))return;const o=P.get(e.pointerId);
+ if(P.size===1){V.cx-=(e.clientX-o[0])*d/V.s;V.cy+=(e.clientY-o[1])*d/V.s;P.set(e.pointerId,[e.clientX,e.clientY]);redraw()}
+ else if(P.size===2){P.set(e.pointerId,[e.clientX,e.clientY]);const[a,b]=[...P.values()],n=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pd)zoomAt(((a[0]+b[0])/2-r.left)*d,((a[1]+b[1])/2-r.top)*d,n/pd);pd=n}};
+cv.onwheel=e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoomAt((e.clientX-r.left)*d,(e.clientY-r.top)*d,Math.exp(-e.deltaY*.0015))};
+$('mz').onchange=()=>draw();$('mn').onclick=()=>{const a=$('adv');a.style.display=a.style.display==='flex'?'none':'flex';size()};
+$('lib').onclick=async()=>{const l=$('ll');if(l.style.display==='block'){l.style.display='none';return}
+ let ks=[];try{ks=await dbKeys()}catch(e){}
+ l.innerHTML='<b>Thư viện bản đồ (lưu trên máy này)</b>'+(ks.length?ks.map((k,i)=>`<div class="lr"><span>${esc(k)}</span><button data-o="${i}">Mở</button><button data-d="${i}">Xóa</button></div>`).join(''):'<p>Chưa có bản đồ nào. Bấm “Mở” để chọn file .dgn.</p>');
+ l.onclick=async e=>{const o=e.target.dataset.o,x=e.target.dataset.d;if(o!=null){l.style.display='none';try{localStorage.setItem('last',ks[o])}catch(z){}await loadBuf(ks[o],new Uint8Array(await dbGet(ks[o])),false)}else if(x!=null){await dbDel(ks[x]);try{if(localStorage.getItem('last')===ks[x])localStorage.removeItem('last')}catch(z){}$('lib').onclick();$('lib').onclick()}};l.style.display='block'};
+$('gps').onclick=()=>{if(gw!=null){navigator.geolocation.clearWatch(gw);gw=null;gp=null;gpf=0;$('gps').classList.remove('on');draw();return}
+ if(!M){st('Hãy mở bản đồ trước');return}if(!navigator.geolocation){st('Thiết bị không hỗ trợ định vị');return}
+ gw=navigator.geolocation.watchPosition(p=>{const u=fromLL(p.coords.latitude,p.coords.longitude);gp={x:u[0],y:u[1],acc:p.coords.accuracy};
+  if(!gpf){gpf=1;const km=Math.hypot(u[0]-V.cx,u[1]-V.cy)/1e6;if(km<3){V.cx=u[0];V.cy=u[1];V.s=Math.max(V.s,.0015*d)}else st(`Bạn cách bản đồ khoảng ${km.toFixed(1)} km`)}
+  draw()},e=>st('Không lấy được vị trí: '+e.message+(location.protocol==='https:'?'':' (định vị cần mở bằng HTTPS)')),{enableHighAccuracy:true,maximumAge:2000});$('gps').classList.add('on')};
+addEventListener('resize',size);
+const initMap=async()=>{try{const n=localStorage.getItem('last');if(n){const b=await dbGet(n);if(b)await loadBuf(n,new Uint8Array(b),false)}}catch(e){}};
+
+
+var started=false;
+return {show:function(){size();if(!started){started=true;initMap()}}};
+}
+
+/* ---------- khung chung ---------- */
+(function(){
+  var MODS=[
+    {id:'bpkt',label:'Hồ sơ BPKT',tpl:'tpl-bpkt',mount:mountBpkt},
+    {id:'law',label:'Pháp luật đất đai',tpl:'tpl-law',mount:mountLaw},
+    {id:'map',label:'Bản đồ DGN',tpl:'tpl-map',mount:mountMap}
+  ];
+  var nav=document.getElementById('nav'),stage=document.getElementById('stage'),cur=null;
+  function theme(){var t=document.documentElement.getAttribute('data-theme');if(t==='dark'||t==='light')return t;return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}
+  function applyTheme(){var t=theme();MODS.forEach(function(m){m.host.setAttribute('data-theme',t)})}
+  MODS.forEach(function(m){
+    var b=document.createElement('button');b.type='button';b.role='tab';b.textContent=m.label;b.id='tab-'+m.id;
+    b.onclick=function(){go(m.id)};nav.appendChild(b);m.btn=b;
+    var h=document.createElement('div');h.className='mod';h.hidden=true;stage.appendChild(h);m.host=h;
+    var r=h.attachShadow({mode:'open'});r.appendChild(document.getElementById(m.tpl).content.cloneNode(true));
+    try{m.api=m.mount(r)}catch(e){console.error(m.id,e);r.appendChild(Object.assign(document.createElement('p'),{textContent:'Không khởi động được mục "'+m.label+'": '+e.message,style:'padding:16px'}))}
+  });
+  applyTheme();
+  new MutationObserver(applyTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change',applyTheme);
+  function go(id){
+    cur=id;
+    MODS.forEach(function(m){var on=m.id===id;m.host.hidden=!on;m.btn.setAttribute('aria-selected',on)});
+    try{localStorage.setItem('vpdk.tab',id)}catch(e){}
+    var m=MODS.filter(function(x){return x.id===id})[0];
+    if(m.api&&m.api.show)try{m.api.show()}catch(e){console.error(e)}
+  }
+  var start='bpkt';try{var s=localStorage.getItem('vpdk.tab');if(MODS.some(function(m){return m.id===s}))start=s}catch(e){}
+  go(start);
+})();
+</script>
+
+</body></html>
